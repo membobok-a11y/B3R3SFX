@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B3R3SFX Trading Journal</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0a0f1c;color:#eef3ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.head h1{margin:0}.muted{color:#8995ad;font-size:13px}
+button{border:0;border-radius:9px;padding:10px 14px;background:#25324b;color:#fff;cursor:pointer;font-weight:700}.primary{background:#5868ff}.danger{background:#4a202a}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.card,.box{background:#111a2b;border:1px solid #26334b;border-radius:13px;padding:15px}.num{font-size:24px;font-weight:800;margin-top:5px}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.box{margin-bottom:14px}.box h2{font-size:16px;margin:0 0 14px}.form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.f label{display:block;color:#8995ad;font-size:12px;margin-bottom:5px}.f input,.f select,.f textarea{width:100%;background:#0b1322;border:1px solid #29364f;color:#fff;border-radius:8px;padding:10px;outline:0}.f textarea{min-height:72px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px}.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{border-radius:9px;padding:12px;background:#0b1322;border:1px solid #29364f}.green{color:#39d98a}.red{color:#ff647c}
+table{width:100%;border-collapse:collapse;min-width:850px}th,td{padding:10px 8px;border-bottom:1px solid #26334b;text-align:left;font-size:13px}th{color:#8995ad;font-size:11px}.scroll{overflow:auto}.pill{padding:4px 7px;border-radius:99px;font-size:11px;font-weight:800}.win{background:#123a29;color:#39d98a}.loss{background:#421d27;color:#ff647c}.be{background:#403718;color:#f2cf63}.filters{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.filters input,.filters select{background:#0b1322;color:#fff;border:1px solid #29364f;padding:9px;border-radius:8px}.chart{height:230px;display:flex;align-items:end;gap:4px;border-bottom:1px solid #26334b;padding:8px 0}.bar{flex:1;background:#5868ff;border-radius:4px 4px 0 0;min-width:3px}.bar.neg{background:#ff647c}.empty{text-align:center;color:#8995ad;padding:24px}.notice{background:#161f34;border:1px solid #29364f;padding:10px;border-radius:9px;font-size:12px;color:#aeb9ce;margin-bottom:12px}
+@media(max-width:850px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr 1fr}}@media(max-width:520px){.wrap{padding:12px}.cards{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}}
+
+.historyScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+.historyTable{min-width:1250px;width:100%;border-collapse:collapse}
+.historyTable th,.historyTable td{padding:10px 8px;vertical-align:top}
+.noteCell{min-width:240px;max-width:360px;white-space:normal;line-height:1.4}
+
+*{box-sizing:border-box}
+body{background:#07151b;color:#e9f4f5}
+.appShell{display:flex;min-height:100vh}
+.sidebar{width:235px;flex-shrink:0;background:#091920;border-right:1px solid #1c3940;padding:24px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 10px 30px}.brandMark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#123e43;color:#56e0cb;font-size:24px;font-weight:900}.brand small,.mobileBrand span{display:block;color:#89a7ad;font-size:11px;margin-top:3px}
+.sideNav{display:grid;gap:6px}.navItem{display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:#9cb4b9;border:1px solid transparent;padding:12px;border-radius:9px;font-size:14px}.navItem span{width:20px;text-align:center;font-size:18px}.navItem:hover,.navItem.active{background:#123239;color:#60dfcc;border-color:#1d454b}
+.sideFoot{margin-top:auto;color:#7d9da3;font-size:11px;padding:15px 10px;line-height:1.8}.sideFoot small{color:#607f85}
+.mainShell{flex:1;min-width:0}.wrap{max-width:1500px;padding:24px 28px;margin:auto}.head h1{font-size:23px}.head .muted{margin-top:5px}
+.page{display:none}.page.active{display:block}.pageTitle{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:8px 0 18px}.pageTitle h2{margin:0;font-size:23px}.pageTitle p{margin:5px 0 0}.period{font-size:10px;letter-spacing:2px;color:#83aaa9}
+.cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card,.box{background:linear-gradient(145deg,#10272f,#0b1d24);border-color:#20434b;box-shadow:0 8px 24px #00000012}.card:first-child{background:linear-gradient(135deg,#103c3c,#10272f)}.num{letter-spacing:-.6px}.muted,th,.f label{color:#91adb2}
+button{background:#18343b;border:1px solid #28525a;transition:filter .15s}.primary{background:#0b9488;border-color:#24b8aa}.danger{background:#47252c;border-color:#713542}.navItem{font-weight:600}
+.f input,.f select,.f textarea,.filters input,.filters select,.result{background:#08171d;border-color:#24434b}.f input:focus,.f select:focus,.f textarea:focus{border-color:#25b8aa}
+table th{background:#0d2027}td{color:#d9e8ea}.pill.win{background:#123c34;color:#6ce6b6}.pill.loss{background:#48232d;color:#ff8799}.pill.be{background:#443c20;color:#f2d875}
+.chart{border-color:#24434b}.bar{background:linear-gradient(180deg,#4fe0c0,#0c9488)}.bar.neg{background:linear-gradient(180deg,#ff899b,#d94b69)}
+.notice{background:#10262d;border-color:#28515a;color:#c0d7da}.dashboardGrid{grid-template-columns:1.2fr 1fr;gap:14px}.dashboardGrid .box:first-child{grid-column:1/-1}.dashStats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:16px}.dashStat{padding:13px;background:#0a1b21;border:1px solid #1e4148;border-radius:9px}.dashStat b{display:block;font-size:18px;margin-top:7px}.settingsActions{display:flex;gap:10px;flex-wrap:wrap}.mobileBrand{display:none}
+@media(max-width:900px){.sidebar{width:190px}.wrap{padding:18px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboardGrid{grid-template-columns:1fr}.dashboardGrid .box:first-child{grid-column:auto}}
+@media(max-width:620px){.appShell{display:block}.sidebar{position:relative;width:100%;height:auto;padding:10px;border-right:0;border-bottom:1px solid #1c3940}.brand{display:none}.sideNav{display:flex;overflow-x:auto;gap:5px}.navItem{white-space:nowrap;padding:9px;font-size:12px;gap:6px}.navItem span{font-size:15px;width:auto}.sideFoot{display:none}.wrap{padding:13px}.head{flex-direction:column;align-items:stretch}.head>div:last-child{display:flex;gap:8px}.mobileBrand{display:block;margin-bottom:12px}.pageTitle h2{font-size:20px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.num{font-size:21px}.dashStats{grid-template-columns:1fr}.pageTitle{align-items:flex-start}}
+
+/* Responsive screen fit */
+html{width:100%;min-height:100%;overflow-x:hidden}
+body{width:100%;min-width:0;overflow-x:hidden}
+.appShell,.mainShell,.wrap{min-width:0;max-width:100%}
+.mainShell{width:calc(100% - 235px)}
+.wrap{width:100%;padding:clamp(12px,2vw,28px)}
+.sidebar{flex-shrink:0}
+img,canvas,svg{max-width:100%}
+.box,.card{min-width:0}
+.entryReasons{border-top:1px solid #24434b;margin-top:12px;padding-top:10px}
+.entryReasons> b{font-size:12px;color:#8fded4}
+.entryReasons ul{margin:7px 0 0;padding-left:20px}
+.entryReasons li{margin:5px 0;color:#d4e3e5;overflow-wrap:anywhere}
+.reasonCount{color:#5ce0b2;font-size:11px;margin-left:5px;white-space:nowrap}
+.evalMeta{font-size:12px;color:#91adb2;margin:7px 0}
+.setupEvalCard{margin-bottom:10px}
+@media(max-width:900px){.mainShell{width:calc(100% - 190px)}}
+@media(max-width:620px){
+ .mainShell{width:100%}
+ .appShell{display:block}
+ .sidebar{width:100%;height:auto;position:relative}
+ .sideNav{width:100%;max-width:100%;overflow-x:auto;scrollbar-width:thin}
+ .wrap{padding:12px}
+ .head{gap:10px}
+ .head>div:last-child{flex-wrap:wrap}
+ .pageTitle{flex-wrap:wrap}
+ .dashboardGrid,.grid{grid-template-columns:minmax(0,1fr)}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .form{grid-template-columns:minmax(0,1fr)}
+ .f.full{grid-column:1/-1}
+ .historyScroll,.scroll{max-width:100%;overflow-x:auto}
+}
+@media print{.sidebar,.head,.navItem,.settingsActions,button{display:none!important}.mainShell{width:100%}.wrap{max-width:100%;padding:0}.page{display:none!important}.page.active{display:block!important}}
+</style>
+</head>
+<body>
+<div class="appShell">
+<aside class="sidebar">
+  <div class="brand"><span class="brandMark">B</span><div><b>B3R3SFX</b><small>Trading Journal</small></div></div>
+  <nav class="sideNav">
+    <button class="navItem active" data-page="dashboard"><span>▦</span> Dashboard</button>
+    <button class="navItem" data-page="journal"><span>▤</span> Journal</button>
+    <button class="navItem" data-page="statistics"><span>▥</span> Statistics</button>
+    <button class="navItem" data-page="settings"><span>⚙</span> Settings</button>
+    <button class="navItem" data-page="network"><span>♧</span> Trader Network</button>
+    <button class="navItem" data-page="help"><span>ⓘ</span> Help Center</button>
+  <av>
+  <div class="sideFoot">B3R3SFX<br><small>Trade. Review. Improve.</small></div>
+</aside>
+<div class="mainShell"><div class="wrap">
+<header class="head">
+ <div class="mobileBrand"><b>B3R3SFX</b><span>Trading Journal</span></div>
+ <div><h1>B3R3SFX Trading Journal</h1><div class="muted">Trading Journal • Review • Improve</div></div>
+ <div><button onclick="exportCSV()">Export CSV</button> <button class="danger" onclick="wipe()">Reset Data</button></div>
+</header>
+
+<section class="page active" id="page-dashboard">
+<div class="pageTitle"><div><h2>Dashboard</h2><p class="muted">Ringkasan performa trading kamu.</p></div><span class="period">LAST 30 DAYS</span></div>
+<div class="cards">
+ <div class="card"><div class="muted">Net Profit</div><div id="net" class="num">$0.00</div></div>
+ <div class="card"><div class="muted">Win Rate</div><div id="winrate" class="num">0%</div></div>
+ <div class="card"><div class="muted">Trades</div><div id="count" class="num">0</div></div>
+ <div class="card"><div class="muted">Profit Factor</div><div id="pf" class="num">0.00</div></div>
+</div>
+
+<div class="grid dashboardGrid">
+<div class="box"><h2>Trading Performance</h2><div class="muted">Perkembangan profit & loss</div><div id="dashboardStats" class="dashStats"></div></div>
+<div class="box"><h2>Equity P&L</h2><div id="chart" class="chart"><div class="empty">Belum ada trade.</div></div></div>
+<div class="box"><h2>Ringkasan</h2><div id="summary" class="muted">Belum ada data.</div></div>
+</div>
+</section>
+<section class="page" id="page-journal">
+<div class="pageTitle"><div><h2>Jurnal Trading</h2><p class="muted">Catat dan tinjau setiap trade yang kamu lakukan.</p></div><button class="primary" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">+ Tambah Trade</button></div>
+<div class="grid">
+<main>
+
+<main>
+<div class="box">
+<h2>Tambah Trade Forex</h2>
+<div class="notice">Isi Pair, BUY/SELL, Entry, Exit, Lot. <b>Profit otomatis</b>. Profit dihitung otomatis dari pair, entry, exit, dan lot. Contoh EURUSD 0.10 lot: 100 pip ≈ $100.</div><div id="status" class="notice">Siap. Isi trade lalu tekan <b>Simpan Trade</b>.</div>
+<div id="form" class="form">
+ <div class="f"><label>Tanggal</label><input id="date" type="date" required></div>
+ <div class="f"><label>Pair</label><select id="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>USDCHF</option><option>AUDUSD</option><option>USDCAD</option><option>NZDUSD</option><option>XAUUSD</option><option>Other</option></select></div>
+ <div class="f"><label>Arah</label><select id="side"><option>BUY</option><option>SELL</option></select></div>
+ <div class="f"><label>Entry</label><input id="entry" type="number" step="any" required></div>
+ <div class="f"><label>Stop Loss</label><input id="sl" type="number" step="any"></div>
+ <div class="f"><label>Take Profit</label><input id="tp" type="number" step="any"></div>
+ <div class="f"><label>Exit</label><input id="exit" type="number" step="any" required></div>
+ <div class="f"><label>Lot</label><input id="lot" type="number" step="0.01" min="0.01" placeholder="0.10" required></div>
+ <div class="f"><label>Nilai pip</label><div class="result"><b id="pipValueDisplay">Otomatis</b><div class="muted">Tidak perlu diisi manual</div></div></div>
+ <div class="f"><label>Setup</label><input id="setup" placeholder="Breakout / S&R / FVG"></div>
+ <div class="f full"><label>Alasan Entry</label><textarea id="entryReason" placeholder="Contoh: harga reject resistance, konfirmasi candle, arah trend sejalan..."></textarea></div>
+ <div class="f"><label>Emosi</label><select id="emotion"><option>Disiplin</option><option>Tenang</option><option>FOMO</option><option>Takut</option><option>Serakah</option><option>Ragu</option></select></div>
+ <div class="f full"><label>Catatan</label><textarea id="notes" placeholder="Alasan entry, kesalahan, pelajaran..."></textarea></div>
+ <div class="f full"><label>Hasil perhitungan</label><div class="calc"><div class="result">Pips: <b id="pips">0.0</b></div><div class="result">Profit/Loss: <b id="livePnl">$0.00</b></div></div></div>
+ <div class="actions full"><button type="button" onclick="clearForm()">Kosongkan</button><button type="button" class="primary" onclick="saveTrade()">Simpan Trade</button></div>
+</div>
+</div>
+
+<div class="box">
+<h2>Riwayat Trade</h2>
+<div class="filters"><input id="q" placeholder="Cari pair/setup..." oninput="render()"><select id="rf" onchange="render()"><option value="">Semua hasil</option><option value="win">WIN</option><option value="loss">LOSS</option><option value="be">BE</option></select></div>
+<div class="scroll"><table><thead><tr><th>Tanggal</th><th>Pair</th><th>Side</th><th>Entry</th><th>Exit</th><th>Lot</th><th>Pips</th><th>P&L</th><th>Hasil</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+</main>
+</div>
+</section>
+<section class="page" id="page-statistics">
+<div class="pageTitle"><div><h2>Statistics</h2><p class="muted">Evaluasi performa, hasil trade, dan setup terbaik.</p></div></div>
+<div class="cards">
+<div class="card"><div class="muted">Winning Trades</div><div id="statWins" class="num">0</div></div>
+<div class="card"><div class="muted">Losing Trades</div><div id="statLosses" class="num">0</div></div>
+<div class="card"><div class="muted">Average P/L</div><div id="statAvg" class="num">$0.00</div></div>
+<div class="card"><div class="muted">Best Setup</div><div id="statBest" class="num" style="font-size:18px">—</div></div>
+</div>
+<div class="box"><h2>📊 Evaluasi Setup</h2><div id="setupEval"></div></div>
+<div class="box"><h2>Riwayat Equity</h2><div id="statChart" class="chart"><div class="empty">Belum ada trade.</div></div></div>
+</section>
+<section class="page" id="page-settings">
+<div class="pageTitle"><div><h2>Settings</h2><p class="muted">Pengaturan data jurnal kamu.</p></div></div>
+<div class="box"><h2>Data & Backup</h2><p class="muted">Simpan salinan jurnal kamu.</p><div class="settingsActions"><button class="primary" onclick="exportCSV()">Export CSV</button><button onclick="exportPDF()">Export PDF</button><button class="danger" onclick="wipe()">Reset Semua Data</button></div><p class="muted">Data tersimpan di browser perangkat ini.</p></div>
+
+</section>
+<section class="page" id="page-network">
+<div class="pageTitle"><div><h2>Trader Network</h2><p class="muted">Ruang untuk membangun kebiasaan evaluasi yang lebih konsisten.</p></div></div>
+<div class="box"><h2>Trade to trade 🤝</h2><p>Gunakan jurnal ini untuk mencatat proses, bukan hanya hasil akhir. Konsistensi dan manajemen risiko lebih penting daripada satu trade yang profit.</p><div class="notice">Fitur komunitas online belum terhubung pada versi lokal ini.</div></div>
+</section>
+<section class="page" id="page-help">
+<div class="pageTitle"><div><h2>Help Center</h2><p class="muted">Panduan singkat penggunaan jurnal.</p></div></div>
+<div class="box"><h2>Mulai menggunakan jurnal</h2><ol><li>Buka menu <b>Journal</b>.</li><li>Isi tanggal, pair, arah, entry, exit, dan lot.</li><li>Tambahkan setup, emosi, serta catatan bila diperlukan.</li><li>Tekan <b>Simpan Trade</b>; statistik akan diperbarui otomatis.</li><li>Buka <b>Statistics</b> untuk mengevaluasi performa dan setup.</li><li>Gunakan <b>Settings → Export CSV</b> untuk backup data.</li></ol></div>
+</section>
+</div></div></div>
+
+<script>
+let trades=[];
+try{trades=JSON.parse(localStorage.getItem("forexJournalV3")||"[]")}catch(e){trades=[]}
+const $=id=>document.getElementById(id);
+$("date").value=new Date().toISOString().slice(0,10);
+
+function money(n){return "$"+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function getPipInfo(pair, entry){
+  // Standard FX pip:
+  // EURUSD/GBPUSD/AUDUSD/NZDUSD/USDCAD/USDCHF = 0.0001
+  // XAUUSD convention used here: 1 pip = $0.10 price movement.
+  // Standard contract = 100 oz per 1.00 lot, so $10 per pip per 1.00 lot.
+  // P/L remains equivalent to price movement × 100 oz × lot.
+  if(pair === "XAUUSD"){
+    return {pipSize:0.10, pipValuePerLot:10.0, label:"$10.00 / pip / 1 lot (pip = $0.10)"};
+  }
+  if(pair === "USDJPY"){
+    // 1 standard lot = 100,000 USD; 1 pip = 0.01 JPY.
+    // Pip value in USD = 1000 / USDJPY price.
+    const rate = Number(entry) || 150;
+    const pv = 1000 / rate;
+    return {pipSize:0.01, pipValuePerLot:pv, label:"≈ $"+pv.toFixed(2)+" / pip / 1 lot"};
+  }
+  if(["EURUSD","GBPUSD","AUDUSD","NZDUSD"].includes(pair)){
+    return {pipSize:0.0001, pipValuePerLot:10, label:"$10.00 / pip / 1 lot"};
+  }
+  if(pair === "USDCAD"){
+    const rate = Number(entry) || 1.35;
+    return {pipSize:0.0001, pipValuePerLot:10 / rate, label:"≈ $"+(10/rate).toFixed(2)+" / pip / 1 lot"};
+  }
+  if(pair === "USDCHF"){
+    const rate = Number(entry) || 0.85;
+    return {pipSize:0.0001, pipValuePerLot:10 * rate, label:"≈ $"+(10*rate).toFixed(2)+" / pip / 1 lot"};
+  }
+  return {pipSize:0.0001, pipValuePerLot:10, label:"$10.00 / pip / 1 lot"};
+}
+
+function calculate(){
+  const entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
+  const pair=$("pair").value, side=$("side").value;
+  const info=getPipInfo(pair, entry);
+  $("pipValueDisplay").textContent=info.label;
+  if(!entry || !exit || !lot){
+    $("pips").textContent="0.0";
+    $("livePnl").textContent="$0.00";
+    $("livePnl").className="result";
+    return {pips:0,pnl:0,valid:false,pipValue:info.pipValuePerLot};
+  }
+  const pips=(side==="BUY" ? exit-entry : entry-exit) / info.pipSize;
+  const pnl=pips * info.pipValuePerLot * lot;
+  $("pips").textContent=pips.toFixed(1);
+  $("livePnl").textContent=(pnl>=0?"+":"")+money(pnl);
+  $("livePnl").className=pnl>=0?"green":"red";
+  return {pips,pnl,valid:true,pipValue:info.pipValuePerLot};
+}
+["entry","exit","lot","pair","side"].forEach(id=>{
+  $(id).addEventListener("input",calculate);
+  $(id).addEventListener("change",calculate);
+});
+
+function saveTrade(){
+  const c=calculate();
+  const pair=$("pair").value, entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
+  if(!entry||!exit||!lot){alert("Isi Entry, Exit, dan Lot terlebih dahulu.");return}
+  const t={
+    id:String(Date.now()),date:$("date").value,pair,side:$("side").value,
+    entry,sl:Number($("sl").value)||0,tp:Number($("tp").value)||0,exit,lot,
+    pipValue:c.pipValue,pips:c.pips,pnl:c.pnl,
+    result:c.pnl>0?"win":c.pnl<0?"loss":"be",setup:$("setup").value,
+    entryReason:$("entryReason").value,emotion:$("emotion").value,notes:$("notes").value
+  };
+  trades.unshift(t);
+  localStorage.setItem("forexJournalV3",JSON.stringify(trades));
+  render();
+  $("status").textContent="✓ Trade tersimpan: "+t.pair+" "+t.side+" | "+money(t.pnl);
+  $("status").className="notice green";
+  clearForm(false);
+}
+
+function clearForm(resetStatus=true){
+  ["entry","sl","tp","exit","lot","setup","entryReason","notes"].forEach(id=>$(id).value="");
+  $("pair").value="EURUSD";$("side").value="BUY";$("emotion").value="Disiplin";
+  $("date").value=new Date().toISOString().slice(0,10);
+  $("pips").textContent="0.0";$("livePnl").textContent="$0.00";$("livePnl").className="";
+  if(resetStatus){$("status").textContent="Form dikosongkan.";$("status").className="notice"}
+}
+
+function deleteTrade(id){
+  trades=trades.filter(t=>t.id!==id);
+  localStorage.setItem("forexJournalV3",JSON.stringify(trades));
+  render();
+}
+window.deleteTrade=deleteTrade; window.saveTrade=saveTrade; window.clearForm=clearForm;
+
+function render(){
+  const q=($("q")?.value||"").toLowerCase(), rf=$("rf")?.value||"";
+  const arr=trades.filter(t=>(!q||(t.pair+" "+t.setup+" "+t.notes).toLowerCase().includes(q))&&(!rf||t.result===rf));
+  $("rows").innerHTML=arr.length?arr.map(t=>`
+    <tr><td>${t.date}</td><td><b>${esc(t.pair)}</b></td><td>${t.side}</td>
+    <td>${t.entry}</td><td>${t.exit}</td><td>${t.lot}</td><td>${Number(t.pips).toFixed(1)}</td>
+    <td class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</td>
+    <td><span class="pill ${t.result}">${t.result.toUpperCase()}</span></td>
+    <td><button type="button" onclick="deleteTrade('${t.id}')">×</button></td></tr>`).join("")
+    :'<tr><td colspan="10" class="empty">Belum ada trade tersimpan.</td></tr>';
+
+  const net=trades.reduce((a,t)=>a+Number(t.pnl),0);
+  const wins=trades.filter(t=>t.result==="win").length;
+  const gp=trades.filter(t=>t.pnl>0).reduce((a,t)=>a+Number(t.pnl),0);
+  const gl=Math.abs(trades.filter(t=>t.pnl<0).reduce((a,t)=>a+Number(t.pnl),0));
+  $("net").textContent=money(net);$("net").className="num "+(net>0?"green":net<0?"red":"");
+  $("winrate").textContent=(trades.length?wins/trades.length*100:0).toFixed(1)+"%";
+  $("count").textContent=trades.length;$("pf").textContent=gl?(gp/gl).toFixed(2):(gp?"∞":"0.00");
+  $("summary").innerHTML=trades.length?
+    `Total pips: <b>${trades.reduce((a,t)=>a+Number(t.pips),0).toFixed(1)}</b><br>Average P&L: <b>${money(net/trades.length)}</b><br>WIN: <b>${wins}</b> · LOSS: <b>${trades.filter(t=>t.result==="loss").length}</b> · BE: <b>${trades.filter(t=>t.result==="be").length}</b>`
+    :"Belum ada data.";
+  const winsCount=trades.filter(t=>t.result==="win").length, lossCount=trades.filter(t=>t.result==="loss").length;
+  $("dashboardStats").innerHTML=`<div class="dashStat"><span class="muted">Win / Loss / BE</span><b>${winsCount}W · ${lossCount}L · ${trades.filter(t=>t.result==="be").length}BE</b></div><div class="dashStat"><span class="muted">Total Pips</span><b>${trades.reduce((a,t)=>a+Number(t.pips||0),0).toFixed(1)}</b></div><div class="dashStat"><span class="muted">Net P/L</span><b class="${net>=0?"green":"red"}">${money(net)}</b></div>`;
+  draw();
+  renderSetupEvaluation();
+}
+
+
+function renderSetupEvaluation(){
+  const box=$("setupEval");
+  if(!box) return;
+  const groups={};
+  trades.forEach(t=>{
+    const k=(t.setup||"Tanpa setup").trim()||"Tanpa setup";
+    if(!groups[k]) groups[k]={n:0,w:0,l:0,p:0,reasons:{}};
+    const g=groups[k];g.n++;g.p+=Number(t.pnl)||0;
+    if((Number(t.pnl)||0)>0)g.w++;
+    if((Number(t.pnl)||0)<0)g.l++;
+    const reason=(t.entryReason||"").trim();
+    if(reason)g.reasons[reason]=(g.reasons[reason]||0)+1;
+  });
+  const rows=Object.entries(groups);
+  box.innerHTML=rows.length?rows.map(([k,g])=>{
+    const wr=(g.w/g.n*100).toFixed(0);
+    const reasons=Object.entries(g.reasons).sort((a,b)=>b[1]-a[1]);
+    return `<div class="card setupEvalCard"><b>${esc(k)}</b>
+      <div class="evalMeta">${g.n} trade · Win ${wr}% · ${g.w}W / ${g.l}L</div>
+      <div class="${g.p>=0?"green":"red"}">${g.p>=0?"+":""}${money(g.p)}</div>
+      <div class="entryReasons"><b>Alasan Entry</b>
+      ${reasons.length?`<ul>${reasons.map(([r,n])=>`<li>${esc(r)} <span class="reasonCount">${n}×</span></li>`).join("")}</ul>`:'<p class="muted">Belum ada alasan entry yang dicatat.</p>'}
+      </div></div>`;
+  }).join(""):'<div class="muted">Belum ada trade untuk dievaluasi.</div>';
+}
+function draw(){
+  const c=$("chart");c.innerHTML="";
+  if(!trades.length){c.innerHTML='<div class="empty">Belum ada trade.</div>';return}
+  let e=0, vals=trades.slice().reverse().map(t=>e+=Number(t.pnl));
+  const max=Math.max(...vals,0),min=Math.min(...vals,0),range=Math.max(max-min,1);
+  vals.forEach(v=>{const b=document.createElement("div");b.className="bar"+(v<0?" neg":"");b.style.height=Math.max(4,Math.abs((v-min)/range)*100)+"%";b.title=money(v);c.appendChild(b)})
+}
+
+function exportCSV(){
+  const cols=["date","pair","side","entry","sl","tp","exit","lot","pipValue","pips","pnl","result","setup","entryReason","emotion","notes"];
+  const csv=[cols.join(","),...trades.map(t=>cols.map(k=>`"${String(t[k]??"").replaceAll('"','""')}"`).join(","))].join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="B3R3SFX-trading-journal.csv";a.click();
+}
+window.exportCSV=exportCSV;
+function wipe(){if(confirm("Hapus semua data?")){trades=[];localStorage.removeItem("forexJournalV3");render();$("status").textContent="Semua data dihapus.";}}
+window.wipe=wipe;
+
+$("q").addEventListener("input",render);$("rf").addEventListener("change",render);
+render();calculate();
+
+// Multi-page sidebar navigation
+document.querySelectorAll(".navItem").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".navItem").forEach(b=>b.classList.toggle("active",b===btn));
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+btn.dataset.page));
+ window.scrollTo({top:0,behavior:"smooth"});
+ if(btn.dataset.page==="statistics") renderExtraStats();
+}));
+function renderExtraStats(){
+ const wins=trades.filter(t=>t.result==="win").length, losses=trades.filter(t=>t.result==="loss").length;
+ const net=trades.reduce((a,t)=>a+Number(t.pnl||0),0);
+ $("statWins").textContent=wins;$("statLosses").textContent=losses;
+ $("statAvg").textContent=money(trades.length?net/trades.length:0);
+ const groups={};trades.forEach(t=>{const k=t.setup||"Tanpa setup";groups[k]=(groups[k]||0)+Number(t.pnl||0)});
+ const best=Object.entries(groups).sort((a,b)=>b[1]-a[1])[0];
+ $("statBest").textContent=best?best[0]:"—";
+ const chart=$("chart").innerHTML;$("statChart").innerHTML=chart;
+}
+</script>
+</body>
+</html>
