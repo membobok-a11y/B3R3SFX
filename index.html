@@ -68,6 +68,39 @@ img,canvas,svg{max-width:100%}
  .historyScroll,.scroll{max-width:100%;overflow-x:auto}
 }
 @media print{.sidebar,.head,.navItem,.settingsActions,button{display:none!important}.mainShell{width:100%}.wrap{max-width:100%;padding:0}.page{display:none!important}.page.active{display:block!important}}
+
+/* Fix layout tablet/desktop: kolom tidak boleh melebar karena tabel */
+#page-journal .grid{grid-template-columns:minmax(0,1fr)}
+#page-journal main{min-width:0}
+.dashboardGrid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.form{grid-template-columns:repeat(3,minmax(0,1fr))}
+.scroll,.historyScroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:900px){.dashboardGrid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:850px){.form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.form{grid-template-columns:minmax(0,1fr)}}
+
+/* Layar penuh di semua perangkat */
+.wrap{max-width:none!important;margin:0!important}
+.mainShell{overflow-x:hidden}
+
+/* Tanpa geser samping: tabel pas di layar, di HP/iPad jadi kartu */
+table{min-width:0!important}
+.scroll,.historyScroll{overflow-x:visible!important}
+.scroll table{table-layout:auto}
+@media(max-width:900px){
+  .scroll table,.scroll tbody,.scroll tr,.scroll td{display:block;width:100%}
+  .scroll thead{display:none}
+  .scroll tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;padding:12px;margin-bottom:10px;border:1px solid #24434b;border-radius:12px;background:#0a1b21}
+  .scroll td{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0;border:0;min-width:0;overflow-wrap:anywhere}
+  .scroll td::before{content:attr(data-label);color:#91adb2;font-size:11px}
+  .scroll td.delCell{grid-column:1/-1;display:block}
+  .scroll td.delCell::before{content:none}
+  .scroll td.delCell button{width:100%}
+  .scroll td.empty{grid-column:1/-1;display:block}
+}
+
+.calc{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+.calc .result,.result{min-width:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -81,7 +114,7 @@ img,canvas,svg{max-width:100%}
     <button class="navItem" data-page="settings"><span>⚙</span> Settings</button>
     <button class="navItem" data-page="network"><span>♧</span> Trader Network</button>
     <button class="navItem" data-page="help"><span>ⓘ</span> Help Center</button>
-  <av>
+  </nav>
   <div class="sideFoot">B3R3SFX<br><small>Trade. Review. Improve.</small></div>
 </aside>
 <div class="mainShell"><div class="wrap">
@@ -110,20 +143,19 @@ img,canvas,svg{max-width:100%}
 <div class="pageTitle"><div><h2>Jurnal Trading</h2><p class="muted">Catat dan tinjau setiap trade yang kamu lakukan.</p></div><button class="primary" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">+ Tambah Trade</button></div>
 <div class="grid">
 <main>
-
-<main>
 <div class="box">
 <h2>Tambah Trade Forex</h2>
 <div class="notice">Isi Pair, BUY/SELL, Entry, Exit, Lot. <b>Profit otomatis</b>. Profit dihitung otomatis dari pair, entry, exit, dan lot. Contoh EURUSD 0.10 lot: 100 pip ≈ $100.</div><div id="status" class="notice">Siap. Isi trade lalu tekan <b>Simpan Trade</b>.</div>
 <div id="form" class="form">
  <div class="f"><label>Tanggal</label><input id="date" type="date" required></div>
- <div class="f"><label>Pair</label><select id="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>USDCHF</option><option>AUDUSD</option><option>USDCAD</option><option>NZDUSD</option><option>XAUUSD</option><option>Other</option></select></div>
+ <div class="f"><label>Pair</label><select id="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>USDCHF</option><option>AUDUSD</option><option>USDCAD</option><option>NZDUSD</option><option>XAUUSD</option><option>XAGUSD</option><option>EURJPY</option><option>GBPJPY</option><option>AUDJPY</option><option>CADJPY</option><option>CHFJPY</option><option>NZDJPY</option><option>EURGBP</option><option>EURCHF</option><option>EURAUD</option><option>EURCAD</option><option>GBPAUD</option><option>GBPCAD</option><option>GBPCHF</option><option>Other</option></select></div>
  <div class="f"><label>Arah</label><select id="side"><option>BUY</option><option>SELL</option></select></div>
  <div class="f"><label>Entry</label><input id="entry" type="number" step="any" required></div>
  <div class="f"><label>Stop Loss</label><input id="sl" type="number" step="any"></div>
  <div class="f"><label>Take Profit</label><input id="tp" type="number" step="any"></div>
  <div class="f"><label>Exit</label><input id="exit" type="number" step="any" required></div>
  <div class="f"><label>Lot</label><input id="lot" type="number" step="0.01" min="0.01" placeholder="0.10" required></div>
+ <div class="f"><label>Profit MT5 (opsional)</label><input id="mt5Profit" type="number" step="any" placeholder="isi jika mau persis sama MT5"></div>
  <div class="f"><label>Nilai pip</label><div class="result"><b id="pipValueDisplay">Otomatis</b><div class="muted">Tidak perlu diisi manual</div></div></div>
  <div class="f"><label>Setup</label><input id="setup" placeholder="Breakout / S&R / FVG"></div>
  <div class="f full"><label>Alasan Entry</label><textarea id="entryReason" placeholder="Contoh: harga reject resistance, konfirmasi candle, arah trend sejalan..."></textarea></div>
@@ -177,63 +209,76 @@ $("date").value=new Date().toISOString().slice(0,10);
 function money(n){return "$"+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-function getPipInfo(pair, entry){
-  // Standard FX pip:
-  // EURUSD/GBPUSD/AUDUSD/NZDUSD/USDCAD/USDCHF = 0.0001
-  // XAUUSD convention used here: 1 pip = $0.10 price movement.
-  // Standard contract = 100 oz per 1.00 lot, so $10 per pip per 1.00 lot.
-  // P/L remains equivalent to price movement × 100 oz × lot.
-  if(pair === "XAUUSD"){
-    return {pipSize:0.10, pipValuePerLot:10.0, label:"$10.00 / pip / 1 lot (pip = $0.10)"};
+// Spesifikasi kontrak seperti MT5 (akun USD): P/L = selisih harga x ukuran kontrak x lot x kurs ke USD
+const SPECS={
+  EURUSD:{pip:0.0001,cs:100000,q:"USD"},GBPUSD:{pip:0.0001,cs:100000,q:"USD"},
+  AUDUSD:{pip:0.0001,cs:100000,q:"USD"},NZDUSD:{pip:0.0001,cs:100000,q:"USD"},
+  USDJPY:{pip:0.01,cs:100000,q:"JPY",usdBase:true},USDCAD:{pip:0.0001,cs:100000,q:"CAD",usdBase:true},
+  USDCHF:{pip:0.0001,cs:100000,q:"CHF",usdBase:true},
+  EURJPY:{pip:0.01,cs:100000,q:"JPY"},GBPJPY:{pip:0.01,cs:100000,q:"JPY"},AUDJPY:{pip:0.01,cs:100000,q:"JPY"},
+  CADJPY:{pip:0.01,cs:100000,q:"JPY"},CHFJPY:{pip:0.01,cs:100000,q:"JPY"},NZDJPY:{pip:0.01,cs:100000,q:"JPY"},
+  EURGBP:{pip:0.0001,cs:100000,q:"GBP"},EURCHF:{pip:0.0001,cs:100000,q:"CHF"},
+  EURAUD:{pip:0.0001,cs:100000,q:"AUD"},EURCAD:{pip:0.0001,cs:100000,q:"CAD"},
+  GBPAUD:{pip:0.0001,cs:100000,q:"AUD"},GBPCAD:{pip:0.0001,cs:100000,q:"CAD"},GBPCHF:{pip:0.0001,cs:100000,q:"CHF"},
+  XAUUSD:{pip:0.10,cs:100,q:"USD"},      // 1 lot = 100 oz, pergerakan $1 = $100
+  XAGUSD:{pip:0.01,cs:5000,q:"USD"}      // 1 lot = 5000 oz
+};
+const APPROX_USD={JPY:1/150,CAD:1/1.35,CHF:1/0.85,GBP:1.27,AUD:0.65,NZD:0.60};
+function getPipInfo(pair, exit){
+  const sp=SPECS[pair];
+  if(!sp) return null;
+  let conv=1, approx=false;
+  if(sp.q!=="USD"){
+    if(sp.usdBase && exit){conv=1/exit}            // USDxxx: dikonversi pakai harga close
+    else {conv=APPROX_USD[sp.q]||1; approx=true}   // cross: perkiraan kurs
   }
-  if(pair === "USDJPY"){
-    // 1 standard lot = 100,000 USD; 1 pip = 0.01 JPY.
-    // Pip value in USD = 1000 / USDJPY price.
-    const rate = Number(entry) || 150;
-    const pv = 1000 / rate;
-    return {pipSize:0.01, pipValuePerLot:pv, label:"≈ $"+pv.toFixed(2)+" / pip / 1 lot"};
-  }
-  if(["EURUSD","GBPUSD","AUDUSD","NZDUSD"].includes(pair)){
-    return {pipSize:0.0001, pipValuePerLot:10, label:"$10.00 / pip / 1 lot"};
-  }
-  if(pair === "USDCAD"){
-    const rate = Number(entry) || 1.35;
-    return {pipSize:0.0001, pipValuePerLot:10 / rate, label:"≈ $"+(10/rate).toFixed(2)+" / pip / 1 lot"};
-  }
-  if(pair === "USDCHF"){
-    const rate = Number(entry) || 0.85;
-    return {pipSize:0.0001, pipValuePerLot:10 * rate, label:"≈ $"+(10*rate).toFixed(2)+" / pip / 1 lot"};
-  }
-  return {pipSize:0.0001, pipValuePerLot:10, label:"$10.00 / pip / 1 lot"};
+  const pipValuePerLot=sp.pip*sp.cs*conv;
+  return {pipSize:sp.pip,cs:sp.cs,conv,approx,pipValuePerLot,
+    label:(approx?"≈ ":"")+"$"+pipValuePerLot.toFixed(2)+" / pip / 1 lot"};
 }
 
 function calculate(){
   const entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
   const pair=$("pair").value, side=$("side").value;
-  const info=getPipInfo(pair, entry);
-  $("pipValueDisplay").textContent=info.label;
+  const manualRaw=$("mt5Profit")?$("mt5Profit").value.trim():"";
+  const manual=manualRaw!==""&&!isNaN(Number(manualRaw));
+  const info=getPipInfo(pair, exit);
+  $("pipValueDisplay").textContent=info?info.label:"Isi Profit MT5 (pair ini tidak otomatis)";
   if(!entry || !exit || !lot){
     $("pips").textContent="0.0";
     $("livePnl").textContent="$0.00";
     $("livePnl").className="result";
-    return {pips:0,pnl:0,valid:false,pipValue:info.pipValuePerLot};
+    return {pips:0,pnl:0,valid:false,pipValue:info?info.pipValuePerLot:0};
   }
-  const pips=(side==="BUY" ? exit-entry : entry-exit) / info.pipSize;
-  const pnl=pips * info.pipValuePerLot * lot;
-  $("pips").textContent=pips.toFixed(1);
-  $("livePnl").textContent=(pnl>=0?"+":"")+money(pnl);
+  const diff=(side==="BUY" ? exit-entry : entry-exit);
+  const pips=info?diff/info.pipSize:0;
+  let pnl=info?diff*info.cs*lot*info.conv:0;
+  if(manual) pnl=Number(manualRaw);              // profit asli dari MT5 menimpa hitungan otomatis
+  const rg0=priceRange(pair);
+  if(rg0 && (entry<rg0[0]||entry>rg0[1]||exit<rg0[0]||exit>rg0[1])){$("status").textContent="⚠ Harga tidak wajar untuk "+pair+". Cek titik desimal (contoh XAUUSD: 4195.753).";$("status").className="notice red"}
+  $("pips").textContent=info?pips.toFixed(1):"-";
+  $("livePnl").textContent=(pnl>=0?"+":"")+money(pnl)+(manual?" (MT5)":(info&&info.approx?" ≈":""));
   $("livePnl").className=pnl>=0?"green":"red";
-  return {pips,pnl,valid:true,pipValue:info.pipValuePerLot};
+  return {pips,pnl,valid:true,pipValue:info?info.pipValuePerLot:0};
 }
-["entry","exit","lot","pair","side"].forEach(id=>{
+["entry","exit","lot","pair","side","mt5Profit"].forEach(id=>{
   $(id).addEventListener("input",calculate);
   $(id).addEventListener("change",calculate);
 });
 
+function priceRange(pair){
+  if(pair==="XAUUSD") return [500,10000];
+  if(pair==="XAGUSD") return [5,300];
+  if(/JPY/.test(pair)) return [50,300];
+  if(SPECS[pair]) return [0.3,3];
+  return null;
+}
 function saveTrade(){
   const c=calculate();
   const pair=$("pair").value, entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
   if(!entry||!exit||!lot){alert("Isi Entry, Exit, dan Lot terlebih dahulu.");return}
+  const rg=priceRange(pair);
+  if(rg && (entry<rg[0]||entry>rg[1]||exit<rg[0]||exit>rg[1]) && !confirm("Harga terlihat tidak wajar untuk "+pair+" (wajar sekitar "+rg[0]+" - "+rg[1]+"). Cek titik desimalnya, contoh XAUUSD: 4195.753 bukan 4195753.\n\nTetap simpan?")) return;
   const t={
     id:String(Date.now()),date:$("date").value,pair,side:$("side").value,
     entry,sl:Number($("sl").value)||0,tp:Number($("tp").value)||0,exit,lot,
@@ -250,7 +295,7 @@ function saveTrade(){
 }
 
 function clearForm(resetStatus=true){
-  ["entry","sl","tp","exit","lot","setup","entryReason","notes"].forEach(id=>$(id).value="");
+  ["entry","sl","tp","exit","lot","setup","entryReason","notes","mt5Profit"].forEach(id=>$(id).value="");
   $("pair").value="EURUSD";$("side").value="BUY";$("emotion").value="Disiplin";
   $("date").value=new Date().toISOString().slice(0,10);
   $("pips").textContent="0.0";$("livePnl").textContent="$0.00";$("livePnl").className="";
@@ -268,11 +313,11 @@ function render(){
   const q=($("q")?.value||"").toLowerCase(), rf=$("rf")?.value||"";
   const arr=trades.filter(t=>(!q||(t.pair+" "+t.setup+" "+t.notes).toLowerCase().includes(q))&&(!rf||t.result===rf));
   $("rows").innerHTML=arr.length?arr.map(t=>`
-    <tr><td>${t.date}</td><td><b>${esc(t.pair)}</b></td><td>${t.side}</td>
-    <td>${t.entry}</td><td>${t.exit}</td><td>${t.lot}</td><td>${Number(t.pips).toFixed(1)}</td>
-    <td class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</td>
-    <td><span class="pill ${t.result}">${t.result.toUpperCase()}</span></td>
-    <td><button type="button" onclick="deleteTrade('${t.id}')">×</button></td></tr>`).join("")
+    <tr><td data-label="Tanggal">${t.date}</td><td data-label="Pair"><b>${esc(t.pair)}</b></td><td data-label="Side">${t.side}</td>
+    <td data-label="Entry">${t.entry}</td><td data-label="Exit">${t.exit}</td><td data-label="Lot">${t.lot}</td><td data-label="Pips">${Number(t.pips).toFixed(1)}</td>
+    <td data-label="P&L" class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</td>
+    <td data-label="Hasil"><span class="pill ${t.result}">${t.result.toUpperCase()}</span></td>
+    <td class="delCell"><button type="button" onclick="deleteTrade('${t.id}')">Hapus ×</button></td></tr>`).join("")
     :'<tr><td colspan="10" class="empty">Belum ada trade tersimpan.</td></tr>';
 
   const net=trades.reduce((a,t)=>a+Number(t.pnl),0);
