@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B3R3SFX Trading Journal</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0a0f1c;color:#eef3ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:20px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.head h1{margin:0}.muted{color:#8995ad;font-size:13px}
+button{border:0;border-radius:9px;padding:10px 14px;background:#25324b;color:#fff;cursor:pointer;font-weight:700}.primary{background:#5868ff}.danger{background:#4a202a}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.card,.box{background:#111a2b;border:1px solid #26334b;border-radius:13px;padding:15px}.num{font-size:24px;font-weight:800;margin-top:5px}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.box{margin-bottom:14px}.box h2{font-size:16px;margin:0 0 14px}.form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.f label{display:block;color:#8995ad;font-size:12px;margin-bottom:5px}.f input,.f select,.f textarea{width:100%;background:#0b1322;border:1px solid #29364f;color:#fff;border-radius:8px;padding:10px;outline:0}.f textarea{min-height:72px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px}.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{border-radius:9px;padding:12px;background:#0b1322;border:1px solid #29364f}.green{color:#39d98a}.red{color:#ff647c}
+table{width:100%;border-collapse:collapse;min-width:850px}th,td{padding:10px 8px;border-bottom:1px solid #26334b;text-align:left;font-size:13px}th{color:#8995ad;font-size:11px}.scroll{overflow:auto}.pill{padding:4px 7px;border-radius:99px;font-size:11px;font-weight:800}.win{background:#123a29;color:#39d98a}.loss{background:#421d27;color:#ff647c}.be{background:#403718;color:#f2cf63}.filters{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.filters input,.filters select{background:#0b1322;color:#fff;border:1px solid #29364f;padding:9px;border-radius:8px}.chart{height:230px;display:flex;align-items:end;gap:4px;border-bottom:1px solid #26334b;padding:8px 0}.bar{flex:1;background:#5868ff;border-radius:4px 4px 0 0;min-width:3px}.bar.neg{background:#ff647c}.empty{text-align:center;color:#8995ad;padding:24px}.notice{background:#161f34;border:1px solid #29364f;padding:10px;border-radius:9px;font-size:12px;color:#aeb9ce;margin-bottom:12px}
+@media(max-width:850px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr 1fr}}@media(max-width:520px){.wrap{padding:12px}.cards{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}}
+
+.historyScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+.historyTable{min-width:1250px;width:100%;border-collapse:collapse}
+.historyTable th,.historyTable td{padding:10px 8px;vertical-align:top}
+.noteCell{min-width:240px;max-width:360px;white-space:normal;line-height:1.4}
+
+*{box-sizing:border-box}
+body{background:#07151b;color:#e9f4f5}
+.appShell{display:flex;min-height:100vh}
+.sidebar{width:235px;flex-shrink:0;background:#091920;border-right:1px solid #1c3940;padding:24px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 10px 30px}.brandMark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#123e43;color:#56e0cb;font-size:24px;font-weight:900}.brand small,.mobileBrand span{display:block;color:#89a7ad;font-size:11px;margin-top:3px}
+.sideNav{display:grid;gap:6px}.navItem{display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:#9cb4b9;border:1px solid transparent;padding:12px;border-radius:9px;font-size:14px}.navItem span{width:20px;text-align:center;font-size:18px}.navItem:hover,.navItem.active{background:#123239;color:#60dfcc;border-color:#1d454b}
+.sideFoot{margin-top:auto;color:#7d9da3;font-size:11px;padding:15px 10px;line-height:1.8}.sideFoot small{color:#607f85}
+.mainShell{flex:1;min-width:0}.wrap{max-width:1500px;padding:24px 28px;margin:auto}.head h1{font-size:23px}.head .muted{margin-top:5px}
+.page{display:none}.page.active{display:block}.pageTitle{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:8px 0 18px}.pageTitle h2{margin:0;font-size:23px}.pageTitle p{margin:5px 0 0}.period{font-size:10px;letter-spacing:2px;color:#83aaa9}
+.cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card,.box{background:linear-gradient(145deg,#10272f,#0b1d24);border-color:#20434b;box-shadow:0 8px 24px #00000012}.card:first-child{background:linear-gradient(135deg,#103c3c,#10272f)}.num{letter-spacing:-.6px}.muted,th,.f label{color:#91adb2}
+button{background:#18343b;border:1px solid #28525a;transition:filter .15s}.primary{background:#0b9488;border-color:#24b8aa}.danger{background:#47252c;border-color:#713542}.navItem{font-weight:600}
+.f input,.f select,.f textarea,.filters input,.filters select,.result{background:#08171d;border-color:#24434b}.f input:focus,.f select:focus,.f textarea:focus{border-color:#25b8aa}
+table th{background:#0d2027}td{color:#d9e8ea}.pill.win{background:#123c34;color:#6ce6b6}.pill.loss{background:#48232d;color:#ff8799}.pill.be{background:#443c20;color:#f2d875}
+.chart{border-color:#24434b}.bar{background:linear-gradient(180deg,#4fe0c0,#0c9488)}.bar.neg{background:linear-gradient(180deg,#ff899b,#d94b69)}
+.notice{background:#10262d;border-color:#28515a;color:#c0d7da}.dashboardGrid{grid-template-columns:1.2fr 1fr;gap:14px}.dashboardGrid .box:first-child{grid-column:1/-1}.dashStats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:16px}.dashStat{padding:13px;background:#0a1b21;border:1px solid #1e4148;border-radius:9px}.dashStat b{display:block;font-size:18px;margin-top:7px}.settingsActions{display:flex;gap:10px;flex-wrap:wrap}.mobileBrand{display:none}
+@media(max-width:900px){.sidebar{width:190px}.wrap{padding:18px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboardGrid{grid-template-columns:1fr}.dashboardGrid .box:first-child{grid-column:auto}}
+@media(max-width:620px){.appShell{display:block}.sidebar{position:relative;width:100%;height:auto;padding:10px;border-right:0;border-bottom:1px solid #1c3940}.brand{display:none}.sideNav{display:flex;overflow-x:auto;gap:5px}.navItem{white-space:nowrap;padding:9px;font-size:12px;gap:6px}.navItem span{font-size:15px;width:auto}.sideFoot{display:none}.wrap{padding:13px}.head{flex-direction:column;align-items:stretch}.head>div:last-child{display:flex;gap:8px}.mobileBrand{display:block;margin-bottom:12px}.pageTitle h2{font-size:20px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.num{font-size:21px}.dashStats{grid-template-columns:1fr}.pageTitle{align-items:flex-start}}
+
+/* Responsive screen fit */
+html{width:100%;min-height:100%;overflow-x:hidden}
+body{width:100%;min-width:0;overflow-x:hidden}
+.appShell,.mainShell,.wrap{min-width:0;max-width:100%}
+.mainShell{width:calc(100% - 235px)}
+.wrap{width:100%;padding:clamp(12px,2vw,28px)}
+.sidebar{flex-shrink:0}
+img,canvas,svg{max-width:100%}
+.box,.card{min-width:0}
+.entryReasons{border-top:1px solid #24434b;margin-top:12px;padding-top:10px}
+.entryReasons> b{font-size:12px;color:#8fded4}
+.entryReasons ul{margin:7px 0 0;padding-left:20px}
+.entryReasons li{margin:5px 0;color:#d4e3e5;overflow-wrap:anywhere}
+.reasonCount{color:#5ce0b2;font-size:11px;margin-left:5px;white-space:nowrap}
+.evalMeta{font-size:12px;color:#91adb2;margin:7px 0}
+.setupEvalCard{margin-bottom:10px}
+@media(max-width:900px){.mainShell{width:calc(100% - 190px)}}
+@media(max-width:620px){
+ .mainShell{width:100%}
+ .appShell{display:block}
+ .sidebar{width:100%;height:auto;position:relative}
+ .sideNav{width:100%;max-width:100%;overflow-x:auto;scrollbar-width:thin}
+ .wrap{padding:12px}
+ .head{gap:10px}
+ .head>div:last-child{flex-wrap:wrap}
+ .pageTitle{flex-wrap:wrap}
+ .dashboardGrid,.grid{grid-template-columns:minmax(0,1fr)}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .form{grid-template-columns:minmax(0,1fr)}
+ .f.full{grid-column:1/-1}
+ .historyScroll,.scroll{max-width:100%;overflow-x:auto}
+}
+@media print{.sidebar,.head,.navItem,.settingsActions,button{display:none!important}.mainShell{width:100%}.wrap{max-width:100%;padding:0}.page{display:none!important}.page.active{display:block!important}}
+
+/* Fix layout tablet/desktop: kolom tidak boleh melebar karena tabel */
+#page-journal .grid{grid-template-columns:minmax(0,1fr)}
+#page-journal main{min-width:0}
+.dashboardGrid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.form{grid-template-columns:repeat(3,minmax(0,1fr))}
+.scroll,.historyScroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:900px){.dashboardGrid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:850px){.form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.form{grid-template-columns:minmax(0,1fr)}}
+
+/* Layar penuh di semua perangkat */
+.wrap{max-width:none!important;margin:0!important}
+.mainShell{overflow-x:hidden}
+
+/* Tanpa geser samping: tabel pas di layar, di HP/iPad jadi kartu */
+table{min-width:0!important}
+.scroll,.historyScroll{overflow-x:visible!important}
+.scroll table{table-layout:auto}
+@media(max-width:900px){
+  .scroll table,.scroll tbody,.scroll tr,.scroll td{display:block;width:100%}
+  .scroll thead{display:none}
+  .scroll tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;padding:12px;margin-bottom:10px;border:1px solid #24434b;border-radius:12px;background:#0a1b21}
+  .scroll td{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0;border:0;min-width:0;overflow-wrap:anywhere}
+  .scroll td::before{content:attr(data-label);color:#91adb2;font-size:11px}
+  .scroll td.delCell{grid-column:1/-1;display:block}
+  .scroll td.delCell::before{content:none}
+  .scroll td.delCell button{width:100%}
+  .scroll td.empty{grid-column:1/-1;display:block}
+}
+
+.calc{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+.calc .result,.result{min-width:0;overflow-wrap:anywhere}
+
+/* Screenshot, AI, Psikologi */
+.aiRow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}.aiRow button{background:#0f3a40;border-color:#25b8aa}.aiRow button:disabled{opacity:.5;cursor:wait}
+#aiStatus{font-size:12px;min-height:16px;overflow-wrap:anywhere}
+.thumb{width:54px;height:36px;object-fit:cover;border-radius:6px;border:1px solid #24434b;cursor:zoom-in}
+.thumbBig{max-width:100%;max-height:240px;border-radius:10px;border:1px solid #24434b;margin-top:8px;display:block}
+.lightbox{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:99;padding:14px;cursor:zoom-out}
+.lightbox.show{display:flex}.lightbox img{max-width:100%;max-height:100%;border-radius:10px}
+.habit{border:1px solid #24434b;border-radius:11px;padding:12px;margin-bottom:10px;background:#0a1b21}
+.habit.bad{border-left:4px solid #ff647c}.habit.good{border-left:4px solid #39d98a}
+.hTop{display:flex;justify-content:space-between;gap:8px}.hCount{font-size:11px;color:#91adb2;white-space:nowrap}
+.hDetail{font-size:13px;color:#d4e3e5;margin-top:6px;overflow-wrap:anywhere}.hTip{font-size:12px;color:#8fded4;margin-top:6px}
+.patRow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #1e4148;font-size:13px}
+.dimBlock{margin-bottom:16px}.dimBlock h3{font-size:13px;color:#8fded4;margin:0 0 6px}
+.dimRow{display:grid;grid-template-columns:minmax(70px,1.3fr) 2fr auto;gap:8px;align-items:center;font-size:12px;padding:4px 0}
+.dimRow.low{opacity:.55}.dimRow .dl{overflow-wrap:anywhere}
+.dbar{height:8px;background:#0d2027;border-radius:9px;overflow:hidden}.dbar i{display:block;height:100%}.dbar i.ok{background:#39d98a}.dbar i.no{background:#ff647c}
+.twoCol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:700px){.twoCol{grid-template-columns:minmax(0,1fr)}}
+#coachOut{white-space:pre-wrap;font-size:13px;line-height:1.6;margin-top:12px;color:#d9e8ea}
+</style>
+</head>
+<body>
+<div class="appShell">
+<aside class="sidebar">
+  <div class="brand"><span class="brandMark">B</span><div><b>B3R3SFX</b><small>Trading Journal</small></div></div>
+  <nav class="sideNav">
+    <button class="navItem active" data-page="dashboard"><span>▦</span> Dashboard</button>
+    <button class="navItem" data-page="journal"><span>▤</span> Journal</button>
+    <button class="navItem" data-page="statistics"><span>▥</span> Statistics</button>
+    <button class="navItem" data-page="psychology"><span>🧠</span> Psikologi & Pola</button>
+    <button class="navItem" data-page="settings"><span>⚙</span> Settings</button>
+    <button class="navItem" data-page="network"><span>♧</span> Trader Network</button>
+    <button class="navItem" data-page="help"><span>ⓘ</span> Help Center</button>
+  </nav>
+  <div class="sideFoot">B3R3SFX<br><small>Trade. Review. Improve.</small></div>
+</aside>
+<div class="mainShell"><div class="wrap">
+<header class="head">
+ <div class="mobileBrand"><b>B3R3SFX</b><span>Trading Journal</span></div>
+ <div><h1>B3R3SFX Trading Journal</h1><div class="muted">Trading Journal • Review • Improve</div></div>
+ <div><button onclick="exportCSV()">Export CSV</button> <button class="danger" onclick="wipe()">Reset Data</button></div>
+</header>
+
+<section class="page active" id="page-dashboard">
+<div class="pageTitle"><div><h2>Dashboard</h2><p class="muted">Ringkasan performa trading kamu.</p></div><span class="period">LAST 30 DAYS</span></div>
+<div class="cards">
+ <div class="card"><div class="muted">Net Profit</div><div id="net" class="num">$0.00</div></div>
+ <div class="card"><div class="muted">Win Rate</div><div id="winrate" class="num">0%</div></div>
+ <div class="card"><div class="muted">Trades</div><div id="count" class="num">0</div></div>
+ <div class="card"><div class="muted">Profit Factor</div><div id="pf" class="num">0.00</div></div>
+</div>
+
+<div class="grid dashboardGrid">
+<div class="box"><h2>Trading Performance</h2><div class="muted">Perkembangan profit & loss</div><div id="dashboardStats" class="dashStats"></div></div>
+<div class="box"><h2>Equity P&L</h2><div id="chart" class="chart"><div class="empty">Belum ada trade.</div></div></div>
+<div class="box"><h2>Ringkasan</h2><div id="summary" class="muted">Belum ada data.</div></div>
+</div>
+</section>
+<section class="page" id="page-journal">
+<div class="pageTitle"><div><h2>Jurnal Trading</h2><p class="muted">Catat dan tinjau setiap trade yang kamu lakukan.</p></div><button class="primary" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">+ Tambah Trade</button></div>
+<div class="grid">
+<main>
+<div class="box">
+<h2>Tambah Trade Forex</h2>
+<div class="notice">Isi Pair, BUY/SELL, Entry, Exit, Lot. <b>Profit otomatis</b>. Profit dihitung otomatis dari pair, entry, exit, dan lot. Contoh EURUSD 0.10 lot: 100 pip ≈ $100.</div><div id="status" class="notice">Siap. Isi trade lalu tekan <b>Simpan Trade</b>.</div>
+<div id="form" class="form">
+ <div class="f"><label>Tanggal</label><input id="date" type="date" required></div>
+ <div class="f"><label>Pair</label><select id="pair"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>USDCHF</option><option>AUDUSD</option><option>USDCAD</option><option>NZDUSD</option><option>XAUUSD</option><option>XAGUSD</option><option>EURJPY</option><option>GBPJPY</option><option>AUDJPY</option><option>CADJPY</option><option>CHFJPY</option><option>NZDJPY</option><option>EURGBP</option><option>EURCHF</option><option>EURAUD</option><option>EURCAD</option><option>GBPAUD</option><option>GBPCAD</option><option>GBPCHF</option><option>Other</option></select></div>
+ <div class="f"><label>Arah</label><select id="side"><option>BUY</option><option>SELL</option></select></div>
+ <div class="f"><label>Entry</label><input id="entry" type="number" step="any" required></div>
+ <div class="f"><label>Stop Loss</label><input id="sl" type="number" step="any"></div>
+ <div class="f"><label>Take Profit</label><input id="tp" type="number" step="any"></div>
+ <div class="f"><label>Exit</label><input id="exit" type="number" step="any" required></div>
+ <div class="f"><label>Lot</label><input id="lot" type="number" step="0.01" min="0.01" placeholder="0.10" required></div>
+ <div class="f"><label>Profit MT5 (opsional)</label><input id="mt5Profit" type="number" step="any" placeholder="isi jika mau persis sama MT5"></div>
+ <div class="f"><label>Nilai pip</label><div class="result"><b id="pipValueDisplay">Otomatis</b><div class="muted">Tidak perlu diisi manual</div></div></div>
+ <div class="f"><label>Jam entry (opsional)</label><input id="time" type="time"></div>
+ <div class="f"><label>Sesuai rencana trading?</label><select id="plan"><option value="Ya">Ya</option><option value="Tidak">Tidak</option></select></div>
+ <div class="f"><label>Setup</label><input id="setup" placeholder="Breakout / S&R / FVG"></div>
+ <div class="f full"><label>Alasan Entry</label><textarea id="entryReason" placeholder="Contoh: harga reject resistance, konfirmasi candle, arah trend sejalan..."></textarea></div>
+ <div class="f"><label>Emosi</label><select id="emotion"><option>Disiplin</option><option>Tenang</option><option>FOMO</option><option>Takut</option><option>Serakah</option><option>Ragu</option></select></div>
+ <div class="f full"><label>Catatan</label><textarea id="notes" placeholder="Alasan entry, kesalahan, pelajaran..."></textarea></div>
+ <div class="f full"><label>Screenshot chart / riwayat MT5</label>
+  <input id="shotFile" type="file" accept="image/*">
+  <div id="shotPrev"></div>
+  <div class="aiRow" id="aiRow"><button type="button" id="aiTradeBtn">✨ Isi otomatis dari screenshot</button><button type="button" id="aiHistBtn">📥 Import banyak trade dari screenshot riwayat</button></div>
+  <div id="aiStatus" class="muted">Upload screenshot chart (posisi entry/SL/TP) atau riwayat MT5, lalu Claude membaca dan mengisi jurnal. Selalu periksa hasilnya.</div>
+ </div>
+ <div class="f full"><label>Hasil perhitungan</label><div class="calc"><div class="result">Pips: <b id="pips">0.0</b></div><div class="result">Profit/Loss: <b id="livePnl">$0.00</b></div></div></div>
+ <div class="actions full"><button type="button" onclick="clearForm()">Kosongkan</button><button type="button" class="primary" onclick="saveTrade()">Simpan Trade</button></div>
+</div>
+</div>
+
+<div class="box">
+<h2>Riwayat Trade</h2>
+<div class="filters"><input id="q" placeholder="Cari pair/setup..." oninput="render()"><select id="rf" onchange="render()"><option value="">Semua hasil</option><option value="win">WIN</option><option value="loss">LOSS</option><option value="be">BE</option></select></div>
+<div class="scroll"><table><thead><tr><th>Tanggal</th><th>Pair</th><th>Side</th><th>Entry</th><th>Exit</th><th>Lot</th><th>Pips</th><th>P&L</th><th>Hasil</th><th>Chart</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+</main>
+</div>
+</section>
+<section class="page" id="page-statistics">
+<div class="pageTitle"><div><h2>Statistics</h2><p class="muted">Evaluasi performa, hasil trade, dan setup terbaik.</p></div></div>
+<div class="cards">
+<div class="card"><div class="muted">Winning Trades</div><div id="statWins" class="num">0</div></div>
+<div class="card"><div class="muted">Losing Trades</div><div id="statLosses" class="num">0</div></div>
+<div class="card"><div class="muted">Average P/L</div><div id="statAvg" class="num">$0.00</div></div>
+<div class="card"><div class="muted">Best Setup</div><div id="statBest" class="num" style="font-size:18px">—</div></div>
+</div>
+<div class="box"><h2>📊 Evaluasi Setup</h2><div id="setupEval"></div></div>
+<div class="box"><h2>Riwayat Equity</h2><div id="statChart" class="chart"><div class="empty">Belum ada trade.</div></div></div>
+</section>
+<section class="page" id="page-psychology">
+<div class="pageTitle"><div><h2>Psikologi & Pola Trading</h2><p class="muted">Deteksi kebiasaan baik/buruk dan setup dengan win rate tertinggi dari jurnalmu.</p></div></div>
+<div id="psNote"></div>
+<div class="cards">
+<div class="card"><div class="muted">Skor Disiplin</div><div id="psScore" class="num">—</div></div>
+<div class="card"><div class="muted">Kebiasaan Buruk</div><div id="psBad" class="num red">0</div></div>
+<div class="card"><div class="muted">Kebiasaan Baik</div><div id="psGood" class="num green">0</div></div>
+<div class="card"><div class="muted">Pola Sukses</div><div id="psWin" class="num">0</div></div>
+</div>
+<div class="box"><h2>🧠 Kebiasaan Trader</h2><div id="habits"></div></div>
+<div class="twoCol">
+<div class="box"><h2>✅ Pola Sukses</h2><div id="patGood"></div></div>
+<div class="box"><h2>⚠ Pola Berbahaya</h2><div id="patBad"></div></div>
+</div>
+<div class="box"><h2>Win rate per kategori</h2><div class="muted" style="margin-bottom:10px">Baris pudar = kurang dari 3 trade (belum cukup data). Sesi memakai jam WIB: Asia 06-14, London 14-19, New York 19-04.</div><div id="dims"></div></div>
+<div class="box" id="coachBox"><h2>🤖 Coach AI</h2><div class="muted">Claude membaca statistik dan catatanmu, lalu memberi evaluasi psikologi dan aturan perbaikan.</div><div class="aiRow"><button type="button" class="primary" id="coachBtn">Minta analisis AI</button></div><div id="coachOut"></div></div>
+</section>
+<section class="page" id="page-settings">
+<div class="pageTitle"><div><h2>Settings</h2><p class="muted">Pengaturan data jurnal kamu.</p></div></div>
+<div class="box"><h2>Data & Backup</h2><p class="muted">Simpan salinan jurnal kamu.</p><div class="settingsActions"><button class="primary" onclick="exportCSV()">Export CSV</button><button onclick="exportPDF()">Export PDF</button><button class="danger" onclick="wipe()">Reset Semua Data</button></div><p class="muted">Data tersimpan di browser perangkat ini.</p></div>
+
+</section>
+<section class="page" id="page-network">
+<div class="pageTitle"><div><h2>Trader Network</h2><p class="muted">Ruang untuk membangun kebiasaan evaluasi yang lebih konsisten.</p></div></div>
+<div class="box"><h2>Trade to trade 🤝</h2><p>Gunakan jurnal ini untuk mencatat proses, bukan hanya hasil akhir. Konsistensi dan manajemen risiko lebih penting daripada satu trade yang profit.</p><div class="notice">Fitur komunitas online belum terhubung pada versi lokal ini.</div></div>
+</section>
+<section class="page" id="page-help">
+<div class="pageTitle"><div><h2>Help Center</h2><p class="muted">Panduan singkat penggunaan jurnal.</p></div></div>
+<div class="box"><h2>Mulai menggunakan jurnal</h2><ol><li>Buka menu <b>Journal</b>.</li><li>Isi tanggal, pair, arah, entry, exit, dan lot.</li><li>Tambahkan setup, emosi, serta catatan bila diperlukan.</li><li>Tekan <b>Simpan Trade</b>; statistik akan diperbarui otomatis.</li><li>Buka <b>Statistics</b> untuk mengevaluasi performa dan setup.</li><li>Gunakan <b>Settings → Export CSV</b> untuk backup data.</li></ol></div>
+</section>
+</div></div></div>
+
+<div id="lightbox" class="lightbox" onclick="this.classList.remove('show')"><img id="lbImg" alt="Screenshot"></div>
+<script>
+let trades=[];
+try{trades=JSON.parse(localStorage.getItem("forexJournalV3")||"[]")}catch(e){trades=[]}
+const $=id=>document.getElementById(id);
+$("date").value=new Date().toISOString().slice(0,10);
+
+function money(n){return "$"+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+// Spesifikasi kontrak seperti MT5 (akun USD): P/L = selisih harga x ukuran kontrak x lot x kurs ke USD
+const SPECS={
+  EURUSD:{pip:0.0001,cs:100000,q:"USD"},GBPUSD:{pip:0.0001,cs:100000,q:"USD"},
+  AUDUSD:{pip:0.0001,cs:100000,q:"USD"},NZDUSD:{pip:0.0001,cs:100000,q:"USD"},
+  USDJPY:{pip:0.01,cs:100000,q:"JPY",usdBase:true},USDCAD:{pip:0.0001,cs:100000,q:"CAD",usdBase:true},
+  USDCHF:{pip:0.0001,cs:100000,q:"CHF",usdBase:true},
+  EURJPY:{pip:0.01,cs:100000,q:"JPY"},GBPJPY:{pip:0.01,cs:100000,q:"JPY"},AUDJPY:{pip:0.01,cs:100000,q:"JPY"},
+  CADJPY:{pip:0.01,cs:100000,q:"JPY"},CHFJPY:{pip:0.01,cs:100000,q:"JPY"},NZDJPY:{pip:0.01,cs:100000,q:"JPY"},
+  EURGBP:{pip:0.0001,cs:100000,q:"GBP"},EURCHF:{pip:0.0001,cs:100000,q:"CHF"},
+  EURAUD:{pip:0.0001,cs:100000,q:"AUD"},EURCAD:{pip:0.0001,cs:100000,q:"CAD"},
+  GBPAUD:{pip:0.0001,cs:100000,q:"AUD"},GBPCAD:{pip:0.0001,cs:100000,q:"CAD"},GBPCHF:{pip:0.0001,cs:100000,q:"CHF"},
+  XAUUSD:{pip:0.10,cs:100,q:"USD"},      // 1 lot = 100 oz, pergerakan $1 = $100
+  XAGUSD:{pip:0.01,cs:5000,q:"USD"}      // 1 lot = 5000 oz
+};
+const APPROX_USD={JPY:1/150,CAD:1/1.35,CHF:1/0.85,GBP:1.27,AUD:0.65,NZD:0.60};
+function getPipInfo(pair, exit){
+  const sp=SPECS[pair];
+  if(!sp) return null;
+  let conv=1, approx=false;
+  if(sp.q!=="USD"){
+    if(sp.usdBase && exit){conv=1/exit}            // USDxxx: dikonversi pakai harga close
+    else {conv=APPROX_USD[sp.q]||1; approx=true}   // cross: perkiraan kurs
+  }
+  const pipValuePerLot=sp.pip*sp.cs*conv;
+  return {pipSize:sp.pip,cs:sp.cs,conv,approx,pipValuePerLot,
+    label:(approx?"≈ ":"")+"$"+pipValuePerLot.toFixed(2)+" / pip / 1 lot"};
+}
+
+function calculate(){
+  const entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
+  const pair=$("pair").value, side=$("side").value;
+  const manualRaw=$("mt5Profit")?$("mt5Profit").value.trim():"";
+  const manual=manualRaw!==""&&!isNaN(Number(manualRaw));
+  const info=getPipInfo(pair, exit);
+  $("pipValueDisplay").textContent=info?info.label:"Isi Profit MT5 (pair ini tidak otomatis)";
+  if(!entry || !exit || !lot){
+    $("pips").textContent="0.0";
+    $("livePnl").textContent="$0.00";
+    $("livePnl").className="result";
+    return {pips:0,pnl:0,valid:false,pipValue:info?info.pipValuePerLot:0};
+  }
+  const diff=(side==="BUY" ? exit-entry : entry-exit);
+  const pips=info?diff/info.pipSize:0;
+  let pnl=info?diff*info.cs*lot*info.conv:0;
+  if(manual) pnl=Number(manualRaw);              // profit asli dari MT5 menimpa hitungan otomatis
+  const rg0=priceRange(pair);
+  if(rg0 && (entry<rg0[0]||entry>rg0[1]||exit<rg0[0]||exit>rg0[1])){$("status").textContent="⚠ Harga tidak wajar untuk "+pair+". Cek titik desimal (contoh XAUUSD: 4195.753).";$("status").className="notice red"}
+  $("pips").textContent=info?pips.toFixed(1):"-";
+  $("livePnl").textContent=(pnl>=0?"+":"")+money(pnl)+(manual?" (MT5)":(info&&info.approx?" ≈":""));
+  $("livePnl").className=pnl>=0?"green":"red";
+  return {pips,pnl,valid:true,pipValue:info?info.pipValuePerLot:0};
+}
+["entry","exit","lot","pair","side","mt5Profit"].forEach(id=>{
+  $(id).addEventListener("input",calculate);
+  $(id).addEventListener("change",calculate);
+});
+
+function priceRange(pair){
+  if(pair==="XAUUSD") return [500,10000];
+  if(pair==="XAGUSD") return [5,300];
+  if(/JPY/.test(pair)) return [50,300];
+  if(SPECS[pair]) return [0.3,3];
+  return null;
+}
+function saveTrade(){
+  const c=calculate();
+  const pair=$("pair").value, entry=Number($("entry").value), exit=Number($("exit").value), lot=Number($("lot").value);
+  if(!entry||!exit||!lot){alert("Isi Entry, Exit, dan Lot terlebih dahulu.");return}
+  const rg=priceRange(pair);
+  if(rg && (entry<rg[0]||entry>rg[1]||exit<rg[0]||exit>rg[1]) && !confirm("Harga terlihat tidak wajar untuk "+pair+" (wajar sekitar "+rg[0]+" - "+rg[1]+"). Cek titik desimalnya, contoh XAUUSD: 4195.753 bukan 4195753.\n\nTetap simpan?")) return;
+  const t={
+    id:String(Date.now()),date:$("date").value,pair,side:$("side").value,
+    entry,sl:Number($("sl").value)||0,tp:Number($("tp").value)||0,exit,lot,
+    pipValue:c.pipValue,pips:c.pips,pnl:c.pnl,
+    result:c.pnl>0?"win":c.pnl<0?"loss":"be",setup:$("setup").value,
+    entryReason:$("entryReason").value,emotion:$("emotion").value,notes:$("notes").value
+  };
+  t.time=$("time").value;t.plan=$("plan").value;if(curShot)t.shot=curShot;
+  trades.unshift(t);
+  if(!persist()&&t.shot){delete t.shot;if(persist())alert("Memori browser penuh: trade disimpan TANPA screenshot.")}
+  render();
+  $("status").textContent="✓ Trade tersimpan: "+t.pair+" "+t.side+" | "+money(t.pnl);
+  $("status").className="notice green";
+  clearForm(false);
+}
+
+function clearForm(resetStatus=true){
+  ["entry","sl","tp","exit","lot","setup","entryReason","notes","mt5Profit","time"].forEach(id=>$(id).value="");
+  $("pair").value="EURUSD";$("side").value="BUY";$("emotion").value="Disiplin";$("plan").value="Ya";if(window.resetShot)resetShot();
+  $("date").value=new Date().toISOString().slice(0,10);
+  $("pips").textContent="0.0";$("livePnl").textContent="$0.00";$("livePnl").className="";
+  if(resetStatus){$("status").textContent="Form dikosongkan.";$("status").className="notice"}
+}
+
+function deleteTrade(id){
+  trades=trades.filter(t=>t.id!==id);
+  persist();
+  render();
+}
+window.deleteTrade=deleteTrade; window.saveTrade=saveTrade; window.clearForm=clearForm;
+
+function render(){
+  const q=($("q")?.value||"").toLowerCase(), rf=$("rf")?.value||"";
+  const arr=trades.filter(t=>(!q||(t.pair+" "+t.setup+" "+t.notes).toLowerCase().includes(q))&&(!rf||t.result===rf));
+  $("rows").innerHTML=arr.length?arr.map(t=>`
+    <tr><td data-label="Tanggal">${t.date}</td><td data-label="Pair"><b>${esc(t.pair)}</b></td><td data-label="Side">${t.side}</td>
+    <td data-label="Entry">${t.entry}</td><td data-label="Exit">${t.exit}</td><td data-label="Lot">${t.lot}</td><td data-label="Pips">${Number(t.pips).toFixed(1)}</td>
+    <td data-label="P&L" class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</td>
+    <td data-label="Hasil"><span class="pill ${t.result}">${t.result.toUpperCase()}</span></td>
+    <td data-label="Chart">${t.shot?`<img class="thumb" src="${t.shot}" onclick="showShot('${t.id}')">`:"—"}</td><td class="delCell"><button type="button" onclick="deleteTrade('${t.id}')">Hapus ×</button></td></tr>`).join("")
+    :'<tr><td colspan="11" class="empty">Belum ada trade tersimpan.</td></tr>';
+
+  const net=trades.reduce((a,t)=>a+Number(t.pnl),0);
+  const wins=trades.filter(t=>t.result==="win").length;
+  const gp=trades.filter(t=>t.pnl>0).reduce((a,t)=>a+Number(t.pnl),0);
+  const gl=Math.abs(trades.filter(t=>t.pnl<0).reduce((a,t)=>a+Number(t.pnl),0));
+  $("net").textContent=money(net);$("net").className="num "+(net>0?"green":net<0?"red":"");
+  $("winrate").textContent=(trades.length?wins/trades.length*100:0).toFixed(1)+"%";
+  $("count").textContent=trades.length;$("pf").textContent=gl?(gp/gl).toFixed(2):(gp?"∞":"0.00");
+  $("summary").innerHTML=trades.length?
+    `Total pips: <b>${trades.reduce((a,t)=>a+Number(t.pips),0).toFixed(1)}</b><br>Average P&L: <b>${money(net/trades.length)}</b><br>WIN: <b>${wins}</b> · LOSS: <b>${trades.filter(t=>t.result==="loss").length}</b> · BE: <b>${trades.filter(t=>t.result==="be").length}</b>`
+    :"Belum ada data.";
+  const winsCount=trades.filter(t=>t.result==="win").length, lossCount=trades.filter(t=>t.result==="loss").length;
+  $("dashboardStats").innerHTML=`<div class="dashStat"><span class="muted">Win / Loss / BE</span><b>${winsCount}W · ${lossCount}L · ${trades.filter(t=>t.result==="be").length}BE</b></div><div class="dashStat"><span class="muted">Total Pips</span><b>${trades.reduce((a,t)=>a+Number(t.pips||0),0).toFixed(1)}</b></div><div class="dashStat"><span class="muted">Net P/L</span><b class="${net>=0?"green":"red"}">${money(net)}</b></div>`;
+  draw();
+  renderSetupEvaluation();
+}
+
+
+function renderSetupEvaluation(){
+  const box=$("setupEval");
+  if(!box) return;
+  const groups={};
+  trades.forEach(t=>{
+    const k=(t.setup||"Tanpa setup").trim()||"Tanpa setup";
+    if(!groups[k]) groups[k]={n:0,w:0,l:0,p:0,reasons:{}};
+    const g=groups[k];g.n++;g.p+=Number(t.pnl)||0;
+    if((Number(t.pnl)||0)>0)g.w++;
+    if((Number(t.pnl)||0)<0)g.l++;
+    const reason=(t.entryReason||"").trim();
+    if(reason)g.reasons[reason]=(g.reasons[reason]||0)+1;
+  });
+  const rows=Object.entries(groups);
+  box.innerHTML=rows.length?rows.map(([k,g])=>{
+    const wr=(g.w/g.n*100).toFixed(0);
+    const reasons=Object.entries(g.reasons).sort((a,b)=>b[1]-a[1]);
+    return `<div class="card setupEvalCard"><b>${esc(k)}</b>
+      <div class="evalMeta">${g.n} trade · Win ${wr}% · ${g.w}W / ${g.l}L</div>
+      <div class="${g.p>=0?"green":"red"}">${g.p>=0?"+":""}${money(g.p)}</div>
+      <div class="entryReasons"><b>Alasan Entry</b>
+      ${reasons.length?`<ul>${reasons.map(([r,n])=>`<li>${esc(r)} <span class="reasonCount">${n}×</span></li>`).join("")}</ul>`:'<p class="muted">Belum ada alasan entry yang dicatat.</p>'}
+      </div></div>`;
+  }).join(""):'<div class="muted">Belum ada trade untuk dievaluasi.</div>';
+}
+function draw(){
+  const c=$("chart");c.innerHTML="";
+  if(!trades.length){c.innerHTML='<div class="empty">Belum ada trade.</div>';return}
+  let e=0, vals=trades.slice().reverse().map(t=>e+=Number(t.pnl));
+  const max=Math.max(...vals,0),min=Math.min(...vals,0),range=Math.max(max-min,1);
+  vals.forEach(v=>{const b=document.createElement("div");b.className="bar"+(v<0?" neg":"");b.style.height=Math.max(4,Math.abs((v-min)/range)*100)+"%";b.title=money(v);c.appendChild(b)})
+}
+
+function exportCSV(){
+  const cols=["date","pair","side","entry","sl","tp","exit","lot","pipValue","pips","pnl","result","time","setup","entryReason","emotion","plan","notes"];
+  const csv=[cols.join(","),...trades.map(t=>cols.map(k=>`"${String(t[k]??"").replaceAll('"','""')}"`).join(","))].join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="B3R3SFX-trading-journal.csv";a.click();
+}
+window.exportCSV=exportCSV;
+function wipe(){if(confirm("Hapus semua data?")){trades=[];localStorage.removeItem("forexJournalV3");render();$("status").textContent="Semua data dihapus.";}}
+window.wipe=wipe;
+
+$("q").addEventListener("input",render);$("rf").addEventListener("change",render);
+render();calculate();
+
+// Multi-page sidebar navigation
+document.querySelectorAll(".navItem").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".navItem").forEach(b=>b.classList.toggle("active",b===btn));
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+btn.dataset.page));
+ window.scrollTo({top:0,behavior:"smooth"});
+ if(btn.dataset.page==="statistics") renderExtraStats();
+ if(btn.dataset.page==="psychology") renderPsych();
+}));
+function renderExtraStats(){
+ const wins=trades.filter(t=>t.result==="win").length, losses=trades.filter(t=>t.result==="loss").length;
+ const net=trades.reduce((a,t)=>a+Number(t.pnl||0),0);
+ $("statWins").textContent=wins;$("statLosses").textContent=losses;
+ $("statAvg").textContent=money(trades.length?net/trades.length:0);
+ const groups={};trades.forEach(t=>{const k=t.setup||"Tanpa setup";groups[k]=(groups[k]||0)+Number(t.pnl||0)});
+ const best=Object.entries(groups).sort((a,b)=>b[1]-a[1])[0];
+ $("statBest").textContent=best?best[0]:"—";
+ const chart=$("chart").innerHTML;$("statChart").innerHTML=chart;
+}
+</script>
+<script>
+/* ===== Penyimpanan ===== */
+function persist(){
+  try{localStorage.setItem("forexJournalV3",JSON.stringify(trades));return true}
+  catch(e){const st=$("status");if(st){st.textContent="⚠ Penyimpanan browser penuh. Hapus beberapa trade/screenshot lama.";st.className="notice red"}return false}
+}
+if(typeof window.exportPDF!=="function"){window.exportPDF=function(){window.print()}}
+
+/* ===== Screenshot ===== */
+let curShot=null,curAiBlob=null,aiSample=null,aiImages=false,idSeq=0;
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),i=new Image();i.onload=()=>{res(i);setTimeout(()=>URL.revokeObjectURL(u),5000)};i.onerror=()=>rej(new Error("img"));i.src=u})}
+function compress(img,maxW,q){const s=Math.min(1,maxW/img.width),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext("2d").drawImage(img,0,0,c.width,c.height);return new Promise(r=>c.toBlob(b=>r({blob:b,url:c.toDataURL("image/jpeg",q)}),"image/jpeg",q))}
+function setAi(msg,err){const e=$("aiStatus");e.textContent=msg;e.className=err?"red":"muted"}
+function resetShot(){curShot=null;curAiBlob=null;$("shotPrev").innerHTML="";$("shotFile").value=""}
+window.resetShot=resetShot;
+$("shotFile").addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f){resetShot();return}
+  try{
+    const img=await loadImg(f);
+    const small=await compress(img,1000,.7),big=await compress(img,1800,.88);
+    curShot=small.url;curAiBlob=big.blob;
+    $("shotPrev").innerHTML='<img class="thumbBig" src="'+curShot+'" alt="Preview"><div class="muted">≈'+Math.round(curShot.length*.75/1024)+' KB akan tersimpan di browser</div>';
+  }catch(err){setAi("Gagal membaca gambar. Coba file lain.",true)}
+});
+function showShot(id){const t=trades.find(x=>x.id===id);if(!t||!t.shot)return;$("lbImg").src=t.shot;$("lightbox").classList.add("show")}
+window.showShot=showShot;
+
+/* ===== Claude membaca screenshot ===== */
+function normPair(v){let p=String(v||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,6);if(p==="GOLD")p="XAUUSD";return SPECS[p]?p:(p?"Other":"EURUSD")}
+function normDate(v){const m=String(v||"").match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);return m?m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0"):new Date().toISOString().slice(0,10)}
+function normTime(v){const m=String(v||"").match(/(\d{1,2}):(\d{2})/);return m?m[1].padStart(2,"0")+":"+m[2]:""}
+const numOrNull=v=>(v===null||v===undefined||v===""||isNaN(Number(v)))?null:Number(v);
+const JSON_RULES="Aturan: pair tanpa slash/suffix (contoh XAUUSD, EURUSD). Angka desimal memakai titik tanpa pemisah ribuan. Jangan menebak: isi null jika tidak terlihat jelas. side hanya BUY atau SELL.";
+const PROMPT_ONE="Kamu membaca screenshot trading forex/emas (MT4, MT5, TradingView atau broker). Ekstrak SATU trade yang paling jelas. Jika ini chart dengan alat posisi long/short, ambil entry, sl, tp dari alat itu; exit null bila posisi belum ditutup. Balas HANYA JSON tanpa teks lain, bentuk: {\"pair\":\"EURUSD\",\"side\":\"BUY\",\"entry\":0,\"sl\":null,\"tp\":null,\"exit\":null,\"lot\":null,\"profit\":null,\"date\":\"YYYY-MM-DD\",\"time\":\"HH:MM\",\"setup\":null,\"catatan\":\"ringkasan 1 kalimat kondisi chart\"}. "+JSON_RULES;
+const PROMPT_MANY="Ini screenshot riwayat/posisi tertutup dari MT4/MT5/broker. Ekstrak SEMUA trade tertutup yang terlihat. Balas HANYA array JSON tanpa teks lain, tiap elemen: {\"pair\":\"EURUSD\",\"side\":\"BUY\",\"entry\":0,\"exit\":0,\"sl\":null,\"tp\":null,\"lot\":0,\"profit\":0,\"date\":\"YYYY-MM-DD\",\"time\":\"HH:MM\"}. entry = harga open, exit = harga close, profit = profit akhir (boleh negatif), date/time = waktu open. "+JSON_RULES;
+async function askAI(prompt){
+  if(!curAiBlob){setAi("Pilih file screenshot dulu.",true);return null}
+  if(!aiSample||!aiImages){setAi("Fitur AI hanya aktif jika jurnal dibuka lewat link Claude.",true);return null}
+  try{setAi("Claude sedang membaca screenshot…");return await aiSample.json(prompt,{images:[curAiBlob],modelTier:"default"})}
+  catch(e){const m={not_granted:"Izin ditolak. Izinkan Claude saat diminta.",rate_limited:"Terlalu banyak permintaan, tunggu sebentar."};setAi(m[e&&e.code]||("Gagal membaca screenshot ("+((e&&e.code)||"error")+"). Coba gambar yang lebih jelas."),true);return null}
+}
+function fillForm(d){
+  const set=(id,v)=>{if(v!==null&&v!==undefined&&v!=="")$(id).value=v};
+  if(d.pair)$("pair").value=normPair(d.pair);
+  if(d.side)$("side").value=String(d.side).toUpperCase().startsWith("S")?"SELL":"BUY";
+  set("entry",numOrNull(d.entry));set("sl",numOrNull(d.sl));set("tp",numOrNull(d.tp));set("exit",numOrNull(d.exit));set("lot",numOrNull(d.lot));set("mt5Profit",numOrNull(d.profit));
+  if(d.date)$("date").value=normDate(d.date);
+  if(d.time)$("time").value=normTime(d.time);
+  set("setup",d.setup);
+  if(d.catatan)$("notes").value=String(d.catatan);
+  calculate();
+}
+function buildTrade(d){
+  if(!d)return null;
+  const pair=normPair(d.pair),side=String(d.side||"").toUpperCase().startsWith("S")?"SELL":"BUY";
+  const entry=Number(d.entry),exit=Number(d.exit),lot=Number(d.lot);
+  if(!(entry>0&&exit>0&&lot>0))return null;
+  const info=getPipInfo(pair,exit),diff=side==="BUY"?exit-entry:entry-exit;
+  const pips=info?diff/info.pipSize:0,pr=numOrNull(d.profit);
+  const pnl=pr!==null?pr:(info?diff*info.cs*lot*info.conv:0);
+  return {id:String(Date.now())+String(idSeq++).padStart(3,"0"),date:normDate(d.date),time:normTime(d.time),pair,side,entry,sl:Number(d.sl)||0,tp:Number(d.tp)||0,exit,lot,
+    pipValue:info?info.pipValuePerLot:0,pips,pnl,result:pnl>0?"win":pnl<0?"loss":"be",setup:"",entryReason:"",emotion:"Tenang",plan:"Ya",notes:"Diimpor dari screenshot (AI)"};
+}
+const dupKey=t=>[t.date,t.pair,t.side,Number(t.entry),Number(t.exit),Number(t.lot)].join("|");
+$("aiTradeBtn").onclick=async()=>{
+  const b=$("aiTradeBtn");b.disabled=true;
+  const d=await askAI(PROMPT_ONE);b.disabled=false;
+  if(!d)return;
+  const o=Array.isArray(d)?d[0]:d;
+  if(!o||typeof o!=="object"){setAi("Tidak ada trade yang terbaca.",true);return}
+  fillForm(o);setAi("✓ Form terisi otomatis. Periksa Entry/SL/TP/Exit/Lot, pilih emosi, lalu tekan Simpan Trade.");
+};
+$("aiHistBtn").onclick=async()=>{
+  const b=$("aiHistBtn");b.disabled=true;
+  const arr=await askAI(PROMPT_MANY);b.disabled=false;
+  if(!arr)return;
+  const list=(Array.isArray(arr)?arr:[arr]).map(buildTrade).filter(Boolean);
+  const fresh=list.filter(n=>!trades.some(t=>dupKey(t)===dupKey(n)));
+  if(!fresh.length){setAi("Tidak ada trade baru yang terbaca (kosong atau sudah tercatat).",true);return}
+  const sum=fresh.reduce((a,t)=>a+t.pnl,0);
+  if(!confirm("Ditemukan "+fresh.length+" trade (total "+money(sum)+"). Tambahkan ke jurnal?\n\nSetelah itu, cek hasil bacaan di Riwayat Trade dan lengkapi setup/emosi."))return;
+  fresh.forEach(t=>trades.unshift(t));
+  persist();render();setAi("✓ "+fresh.length+" trade ditambahkan. Lengkapi setup & emosi agar analisis psikologi akurat.");
+};
+(async()=>{
+  try{
+    if(typeof claude==="undefined"||!claude.use)throw 0;
+    aiSample=await claude.use("sample");
+    if(aiSample){const l=await aiSample.limits();aiImages=!!(l&&l.images)}
+  }catch(e){aiSample=null}
+  if(!aiSample||!aiImages){$("aiRow").style.display="none";setAi("Upload screenshot tetap bisa. Baca otomatis oleh AI hanya aktif saat jurnal dibuka lewat link Claude.")}
+  if(!aiSample){$("coachBox").style.display="none"}
+})();
+
+/* ===== Analisis psikologi & pola ===== */
+const GOOD_EMO=["Disiplin","Tenang"],BAD_EMO=["FOMO","Takut","Serakah","Ragu"],DAYS=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const minutes=t=>{if(!t.time)return null;const x=String(t.time).split(":").map(Number);return x[0]*60+(x[1]||0)};
+function session(t){const m=minutes(t);if(m===null)return null;const h=m/60;if(h>=6&&h<14)return"Sesi Asia";if(h>=14&&h<19)return"Sesi London";if(h>=19||h<4)return"Sesi New York";return"Di luar sesi"}
+const dayName=t=>DAYS[new Date(t.date+"T00:00:00").getDay()]||null;
+const sKey=t=>(t.setup||"").trim();
+function chrono(){return trades.slice().sort((a,b)=>((a.date+" "+(a.time||"00:00")).localeCompare(b.date+" "+(b.time||"00:00")))||(Number(a.id)-Number(b.id)))}
+function agg(l){const n=l.length,w=l.filter(t=>t.pnl>0).length,net=l.reduce((a,t)=>a+Number(t.pnl||0),0);return{n,w,wr:n?w/n*100:0,net,avg:n?net/n:0}}
+function groupBy(list,fn){const m=new Map();list.forEach(t=>{const raw=fn(t);if(!raw)return;const k=String(raw).trim().toLowerCase();if(!m.has(k))m.set(k,{label:String(raw).trim(),list:[]});m.get(k).list.push(t)});return[...m.values()].map(g=>Object.assign({label:g.label},agg(g.list)))}
+const DIMS=[["Setup",sKey],["Pair",t=>t.pair],["Arah",t=>t.side],["Sesi",session],["Hari",dayName],["Emosi",t=>t.emotion],
+  ["Setup + Pair",t=>sKey(t)?sKey(t)+" · "+t.pair:""],["Setup + Arah",t=>sKey(t)?sKey(t)+" · "+t.side:""],["Setup + Sesi",t=>(sKey(t)&&session(t))?sKey(t)+" · "+session(t):""]];
+function patterns(){
+  const all=[];DIMS.forEach(([name,fn])=>groupBy(trades,fn).forEach(g=>all.push(Object.assign({dim:name},g))));
+  const ok=all.filter(g=>g.n>=3);
+  return{all,
+    success:ok.filter(g=>g.wr>=60&&g.net>0).sort((a,b)=>b.wr-a.wr||b.net-a.net),
+    danger:ok.filter(g=>g.wr<=40||g.net<0).sort((a,b)=>a.net-b.net)};
+}
+function analyze(){
+  const ch=chrono(),N=ch.length,items=[],comps=[];
+  const pct=(a,b)=>b?Math.round(a/b*100):0;
+  const bad=(title,detail,tip,count)=>items.push({t:"bad",title,detail,tip,count});
+  const good=(title,detail,count)=>items.push({t:"good",title,detail,count});
+  const fmt=a=>"win rate "+a.wr.toFixed(0)+"%, net "+money(a.net);
+
+  // Revenge trading & lot naik setelah loss
+  let afterLoss=0;const revenge=[],escal=[];
+  for(let i=1;i<N;i++){
+    const p=ch[i-1],c=ch[i];if(!(p.pnl<0))continue;afterLoss++;
+    const same=p.date===c.date,mp=minutes(p),mc=minutes(c);
+    const quick=same&&mp!==null&&mc!==null&&mc-mp>=0&&mc-mp<=20;
+    const emo=["FOMO","Serakah"].includes(c.emotion);
+    if(Number(c.lot)>=Number(p.lot)*1.5)escal.push(c);
+    if((same&&(quick||Number(c.lot)>=Number(p.lot)*1.25))||emo)revenge.push(c);
+  }
+  if(afterLoss>=3)comps.push(100-pct(revenge.length,afterLoss));
+  if(revenge.length>=2||(revenge.length===1&&N<10))bad("Revenge trading / entry terburu-buru setelah loss",revenge.length+" trade dibuka cepat, dengan lot lebih besar, atau saat FOMO/serakah setelah loss ("+fmt(agg(revenge))+")","Setelah loss, beri jeda minimal 30 menit sebelum entry berikutnya dan jangan naikkan lot.",revenge.length);
+  else if(afterLoss>=3&&!revenge.length)good("Tenang setelah loss","Dari "+afterLoss+" trade setelah loss, tidak ada tanda revenge trading.",afterLoss);
+  if(escal.length)bad("Menaikkan lot setelah loss","Lot naik ≥1,5x setelah loss sebanyak "+escal.length+"x ("+fmt(agg(escal))+")","Pakai lot tetap berbasis % risiko. Hindari martingale.",escal.length);
+  const lots=ch.map(t=>Number(t.lot)).filter(x=>x>0);
+  if(lots.length>=5){const m=lots.reduce((a,b)=>a+b,0)/lots.length,sd=Math.sqrt(lots.reduce((a,b)=>a+(b-m)*(b-m),0)/lots.length);if(m&&sd/m<=.3)good("Ukuran lot konsisten","Lot rata-rata "+m.toFixed(2)+" dengan variasi kecil.",lots.length)}
+
+  // Overtrading
+  const byDay={};ch.forEach(t=>(byDay[t.date]=byDay[t.date]||[]).push(t));
+  const days=Object.values(byDay),heavy=days.filter(d=>d.length>5),light=days.filter(d=>d.length<=5);
+  if(days.length)comps.push(100-pct(heavy.length,days.length));
+  if(heavy.length){const hl=[].concat.apply([],heavy),ll=[].concat.apply([],light);bad("Overtrading",heavy.length+" hari dengan lebih dari 5 trade ("+fmt(agg(hl))+(ll.length?" vs hari normal: "+fmt(agg(ll)):"")+")","Batasi maksimal trade per hari dan berhenti saat target atau batas loss harian tercapai.",heavy.length)}
+
+  // Stop loss
+  const noSL=ch.filter(t=>!(t.sl>0));
+  comps.push(pct(N-noSL.length,N));
+  if(noSL.length>=2&&noSL.length/N>=.3)bad("Entry tanpa Stop Loss",noSL.length+" dari "+N+" trade tanpa SL ("+fmt(agg(noSL))+")","Tentukan SL sebelum entry. Tanpa SL satu trade bisa menghapus banyak profit.",noSL.length);
+  else if(N>=5&&!noSL.length)good("Selalu memakai Stop Loss","Semua "+N+" trade punya SL.",N);
+  const slBreak=ch.filter(t=>{if(!(t.sl>0)||!(t.pnl<0))return false;const i=getPipInfo(t.pair,t.exit);if(!i)return false;const planned=Math.abs(t.entry-t.sl)/i.pipSize;return planned>0&&Math.abs(t.pips)>planned*1.25});
+  if(slBreak.length)bad("Loss melebihi Stop Loss (SL digeser/dihapus)",slBreak.length+" trade rugi lebih besar dari jarak SL rencana","Jangan geser SL menjauh. Cek juga slippage/spread broker pada trade tersebut.",slBreak.length);
+
+  // Cut profit & R:R
+  const wins=ch.filter(t=>t.pnl>0),losses=ch.filter(t=>t.pnl<0);
+  const winTP=wins.filter(t=>t.tp>0&&t.entry),early=winTP.filter(t=>Math.abs(t.exit-t.entry)<Math.abs(t.tp-t.entry)*.6);
+  if(early.length>=2&&early.length/winTP.length>=.4)bad("Menutup profit terlalu cepat",early.length+" dari "+winTP.length+" trade win ditutup sebelum 60% jarak TP","Percayai rencana: tahan sampai TP atau gunakan trailing SL sesuai aturan.",early.length);
+  if(wins.length>=2&&losses.length>=2){
+    const aw=agg(wins).avg,al=Math.abs(agg(losses).avg);
+    if(aw<al*.8)bad("Rata-rata win lebih kecil dari rata-rata loss","Rata-rata win "+money(aw)+" vs loss "+money(al)+". Butuh win rate sangat tinggi untuk untung.","Targetkan R:R minimal 1:1,5.",losses.length);
+    else if(aw>=al*1.5)good("Risk:Reward sehat","Rata-rata win "+money(aw)+" vs loss "+money(al),wins.length);
+  }
+  const rrs=ch.filter(t=>t.sl>0&&t.tp>0&&t.entry!==t.sl).map(t=>Math.abs(t.tp-t.entry)/Math.abs(t.entry-t.sl)).filter(isFinite);
+  const lowRR=rrs.filter(x=>x<1);
+  if(lowRR.length>=2&&lowRR.length/rrs.length>=.4)bad("Rencana R:R di bawah 1:1",lowRR.length+" dari "+rrs.length+" trade punya TP lebih dekat dari SL","Cari setup dengan TP minimal 1,5x jarak SL.",lowRR.length);
+  else if(rrs.length>=3){const m=rrs.reduce((a,b)=>a+b,0)/rrs.length;if(m>=1.5)good("Rencana R:R bagus","Rata-rata R:R rencana 1:"+m.toFixed(1),rrs.length)}
+
+  // Emosi
+  const be=ch.filter(t=>BAD_EMO.includes(t.emotion)),ge=ch.filter(t=>GOOD_EMO.includes(t.emotion));
+  comps.push(pct(N-be.length,N));
+  if(be.length>=2)bad("Trading saat emosi negatif",be.length+" trade saat FOMO/Takut/Serakah/Ragu ("+fmt(agg(be))+")"+(ge.length>=2?" vs saat tenang/disiplin: "+fmt(agg(ge)):""),"Jika merasa FOMO atau ragu, lewati trade itu dan tunggu setup sesuai checklist.",be.length);
+  if(ge.length>=3){const a=agg(ge);if(a.wr>=50&&a.net>0)good("Hasil terbaikmu saat tenang & disiplin",ge.length+" trade ("+fmt(a)+")",ge.length)}
+
+  // Setup & alasan
+  const noReason=ch.filter(t=>!sKey(t)||!(t.entryReason||"").trim());
+  comps.push(pct(N-noReason.length,N));
+  if(noReason.length>=2&&noReason.length/N>=.3)bad("Entry tanpa setup / alasan jelas",noReason.length+" dari "+N+" trade tanpa setup atau alasan entry ("+fmt(agg(noReason))+")","Isi setup dan alasan entry sebelum menekan buy/sell.",noReason.length);
+  else if(N>=5&&!noReason.length)good("Selalu mencatat setup & alasan entry","Semua trade punya setup dan alasan.",N);
+
+  // Rencana
+  const pl=ch.filter(t=>t.plan),off=pl.filter(t=>t.plan==="Tidak");
+  if(pl.length)comps.push(pct(pl.length-off.length,pl.length));
+  if(off.length>=2)bad("Melanggar rencana trading",off.length+" trade tidak sesuai rencana ("+fmt(agg(off))+")","Buat checklist entry. Jika ada yang tidak terpenuhi, jangan entry.",off.length);
+  else if(pl.length>=5&&!off.length)good("Disiplin mengikuti rencana","Semua "+pl.length+" trade sesuai rencana.",pl.length);
+
+  // Loss streak
+  let cur=0,max=0;ch.forEach(t=>{if(t.pnl<0){cur++;max=Math.max(max,cur)}else cur=0});
+  if(max>=3)bad("Loss beruntun "+max+"x","Rentetan loss terpanjang "+max+" trade berturut-turut.","Setelah 2-3 loss beruntun, berhenti trading hari itu dan review jurnal.",max);
+
+  const score=(N>=3&&comps.length)?Math.round(comps.reduce((a,b)=>a+b,0)/comps.length):null;
+  return{items,score,N};
+}
+function habitCard(i){return '<div class="habit '+i.t+'"><div class="hTop"><b>'+(i.t==="bad"?"⚠ ":"✅ ")+esc(i.title)+'</b><span class="hCount">'+i.count+'×</span></div><div class="hDetail">'+esc(i.detail)+'</div>'+(i.tip?'<div class="hTip">💡 '+esc(i.tip)+'</div>':"")+'</div>'}
+function patLine(g){return '<div class="patRow"><div><b>'+esc(g.dim)+':</b> '+esc(g.label)+'</div><div class="muted">'+g.n+' trade · WR '+g.wr.toFixed(0)+'% · <span class="'+(g.net>=0?"green":"red")+'">'+(g.net>=0?"+":"")+money(g.net)+'</span></div></div>'}
+function renderPsych(){
+  if(!$("habits"))return;
+  const N=trades.length,a=analyze(),p=patterns();
+  const bads=a.items.filter(i=>i.t==="bad"),goods=a.items.filter(i=>i.t==="good");
+  const sc=$("psScore");sc.textContent=a.score===null?"—":a.score+"/100";sc.className="num "+(a.score===null?"":a.score>=75?"green":a.score>=50?"":"red");
+  $("psBad").textContent=bads.length;$("psGood").textContent=goods.length;$("psWin").textContent=p.success.length;
+  $("psNote").innerHTML=N<20?'<div class="notice">Baru '+N+' trade tercatat. Analisis makin akurat setelah 20+ trade (pola butuh minimal 3 trade). Isi setup, emosi, SL/TP, dan jam entry agar deteksi lebih lengkap.</div>':"";
+  $("habits").innerHTML=N?(a.items.length?bads.concat(goods).map(habitCard).join(""):'<div class="muted">Belum ada kebiasaan yang terdeteksi. Tambah data trade.</div>'):'<div class="muted">Belum ada trade.</div>';
+  $("patGood").innerHTML=p.success.length?p.success.slice(0,6).map(patLine).join(""):'<div class="muted">Belum ada pola dengan win rate ≥60% dan profit (min. 3 trade).</div>';
+  $("patBad").innerHTML=p.danger.length?p.danger.slice(0,6).map(patLine).join(""):'<div class="muted">Belum ada pola berbahaya terdeteksi.</div>';
+  let h="";
+  DIMS.forEach(([name])=>{
+    const rows=p.all.filter(g=>g.dim===name).sort((x,y)=>y.wr-x.wr||y.n-x.n);
+    if(!rows.length)return;
+    h+='<div class="dimBlock"><h3>'+esc(name)+'</h3>'+rows.map(g=>'<div class="dimRow'+(g.n<3?" low":"")+'"><span class="dl">'+esc(g.label)+'</span><div class="dbar"><i class="'+(g.wr>=50?"ok":"no")+'" style="width:'+g.wr.toFixed(0)+'%"></i></div><span>'+g.wr.toFixed(0)+'% · '+g.n+'</span></div>').join("")+'</div>';
+  });
+  $("dims").innerHTML=h||'<div class="muted">Belum ada data.</div>';
+}
+window.renderPsych=renderPsych;
+$("coachBtn").onclick=async()=>{
+  const out=$("coachOut");
+  if(!aiSample){out.textContent="Coach AI hanya aktif saat jurnal dibuka lewat link Claude.";return}
+  if(trades.length<3){out.textContent="Catat minimal 3 trade dulu.";return}
+  const a=analyze(),p=patterns(),cut=s=>String(s||"").slice(0,200);
+  const payload={totalTrade:trades.length,ringkasan:agg(trades),skorDisiplin:a.score,
+    kebiasaan:a.items.map(i=>({jenis:i.t==="bad"?"buruk":"baik",judul:i.title,detail:i.detail})),
+    polaSukses:p.success.slice(0,6).map(g=>({kategori:g.dim,nama:g.label,trade:g.n,winRate:Math.round(g.wr),net:Math.round(g.net)})),
+    polaBahaya:p.danger.slice(0,6).map(g=>({kategori:g.dim,nama:g.label,trade:g.n,winRate:Math.round(g.wr),net:Math.round(g.net)})),
+    trade25Terakhir:chrono().slice(-25).map(t=>({tgl:t.date,jam:t.time||"",pair:t.pair,arah:t.side,hasil:t.result,pnl:Math.round(t.pnl),emosi:t.emotion,sesuaiRencana:t.plan||"",setup:cut(t.setup),alasan:cut(t.entryReason),catatan:cut(t.notes)}))};
+  const prompt="Kamu coach psikologi trading forex. Berdasarkan data jurnal berikut (JSON), tulis evaluasi dalam bahasa Indonesia yang langsung dan jujur, tanpa markdown, maksimal 350 kata, dengan bagian bernomor: 1) 3 kebiasaan buruk utama beserta buktinya dari data; 2) 2-3 kebiasaan baik yang perlu dipertahankan; 3) pola/setup yang paling layak diprioritaskan dan yang harus dihindari; 4) 5 aturan trading konkret untuk minggu depan. Jangan menjanjikan profit dan jangan memberi sinyal trading. Jika data masih sedikit, katakan hasilnya baru indikasi awal.\n\nDATA:\n"+JSON.stringify(payload);
+  const btn=$("coachBtn");btn.disabled=true;out.textContent="Thinking…";
+  try{await aiSample(prompt,{cache:false,onText:({text})=>{out.textContent=text}})}
+  catch(e){out.textContent=(e&&e.text)||"";if(!e||e.code!=="cancelled")out.textContent+=(out.textContent?"\n\n":"")+"Gagal memuat analisis AI ("+((e&&e.code)||"error")+"). Coba lagi nanti."}
+  btn.disabled=false;
+};
+</script>
+</body>
+</html>
